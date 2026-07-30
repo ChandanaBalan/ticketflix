@@ -219,9 +219,13 @@ class MoviePosterCard extends StatelessWidget {
                       size: 15,
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      '${movie.likes} likes',
-                      style: const TextStyle(fontSize: 12),
+                    Expanded(
+                      child: Text(
+                        '${movie.likes} likes',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 12),
+                      ),
                     ),
                   ],
                 ),

@@ -196,7 +196,11 @@ class _MovieListPageState extends ConsumerState<MovieListPage> {
                                 crossAxisCount: columns,
                                 crossAxisSpacing: context.isMobile ? 16 : 22,
                                 mainAxisSpacing: 24,
-                                childAspectRatio: context.isMobile ? .58 : .61,
+                                // Includes poster, likes, a two-line title, and
+                                // genre metadata. The previous ratio only
+                                // budgeted for the poster and caused the card
+                                // Column to overflow by roughly 52 px.
+                                childAspectRatio: context.isMobile ? .46 : .50,
                               ),
                           itemCount: movies.length,
                           itemBuilder: (context, index) => MoviePosterCard(
