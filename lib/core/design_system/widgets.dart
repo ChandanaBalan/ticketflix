@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
@@ -266,7 +267,7 @@ class TicketflixRemoteImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.network(
-      url,
+      _imageRequestUrl(url),
       fit: fit,
       filterQuality: FilterQuality.medium,
       loadingBuilder: (context, child, progress) {
@@ -297,6 +298,14 @@ class TicketflixRemoteImage extends StatelessWidget {
       ),
     );
   }
+}
+
+String _imageRequestUrl(String sourceUrl) {
+  if (!kIsWeb) return sourceUrl;
+  return Uri.base
+      .resolve('/image-proxy')
+      .replace(queryParameters: {'url': sourceUrl})
+      .toString();
 }
 
 Future<T?> showTicketflixSheet<T>({
