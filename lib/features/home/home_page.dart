@@ -16,6 +16,61 @@ class HomePage extends ConsumerWidget {
       ..showSnackBar(SnackBar(content: Text('$label is coming soon.')));
   }
 
+  Future<void> _showFeaturePreview(
+    BuildContext context, {
+    required String title,
+    required String description,
+    required String actionLabel,
+  }) async {
+    await showTicketflixSheet<void>(
+      context: context,
+      builder: (context) => SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SheetHandle(),
+              Icon(
+                title == 'Prebooking'
+                    ? Icons.event_available_rounded
+                    : Icons.handshake_outlined,
+                color: AppColors.primary,
+                size: 42,
+              ),
+              const SizedBox(height: 14),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                description,
+                textAlign: TextAlign.center,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: AppColors.muted),
+              ),
+              const SizedBox(height: 20),
+              TicketflixButton(
+                label: actionLabel,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('$title setup saved for later.')),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final movies = ref.watch(mockRepositoryProvider).movies;
@@ -29,13 +84,29 @@ class HomePage extends ConsumerWidget {
               onDestinationSelected: (index) {
                 if (index == 3) {
                   context.push('/movies');
+                } else if (index == 1) {
+                  _showFeaturePreview(
+                    context,
+                    title: 'Prebooking',
+                    description:
+                        'Get early access to popular releases and reserve your seats before regular bookings open.',
+                    actionLabel: 'Join prebooking list',
+                  );
+                } else if (index == 2) {
+                  _showFeaturePreview(
+                    context,
+                    title: 'Affiliate & Refer',
+                    description:
+                        'Share movies with friends, track referrals, and unlock Ticketflix rewards in one place.',
+                    actionLabel: 'Create referral link',
+                  );
                 } else if (index != 0) {
                   _comingSoon(
                     context,
                     const [
                       'Home',
-                      'HSBC Lounge',
-                      'Live Events',
+                      'Prebooking',
+                      'Refer & Earn',
                       'Search',
                     ][index],
                   );
@@ -52,11 +123,13 @@ class HomePage extends ConsumerWidget {
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.card_membership_outlined),
-                  label: 'HSBC Lounge',
+                  selectedIcon: Icon(Icons.event_available_rounded),
+                  label: 'Prebooking',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.confirmation_number_outlined),
-                  label: 'Live Events',
+                  icon: Icon(Icons.handshake_outlined),
+                  selectedIcon: Icon(Icons.handshake),
+                  label: 'Refer & Earn',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.search),
