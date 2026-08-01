@@ -72,11 +72,11 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
     final canPay = draft.selectedSeatIds.length == draft.ticketCount;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.surface,
       bottomNavigationBar: SafeArea(
         top: false,
         child: Material(
-          color: Colors.white,
+          color: AppColors.surface,
           elevation: 10,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
@@ -274,7 +274,7 @@ class _TopShowtime extends StatelessWidget {
       height: 54,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: selected ? AppColors.success : Colors.white,
+        color: selected ? AppColors.accent : AppColors.surface,
         border: Border.all(color: color, width: 1.5),
         borderRadius: BorderRadius.circular(3),
       ),
@@ -284,7 +284,7 @@ class _TopShowtime extends StatelessWidget {
           Text(
             time,
             style: TextStyle(
-              color: selected ? Colors.white : AppColors.muted,
+              color: selected ? AppColors.ink : AppColors.muted,
               fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
               fontSize: 13,
             ),
@@ -293,7 +293,9 @@ class _TopShowtime extends StatelessWidget {
             Text(
               experience,
               style: TextStyle(
-                color: selected ? Colors.white70 : AppColors.muted,
+                color: selected
+                    ? AppColors.ink.withValues(alpha: .65)
+                    : AppColors.muted,
                 fontSize: 9,
               ),
             ),
@@ -414,8 +416,8 @@ class _SeatSquare extends StatelessWidget {
             color: sold
                 ? const Color(0xFFE7E7E7)
                 : selected
-                ? AppColors.success
-                : Colors.white,
+                ? AppColors.accent
+                : AppColors.surface,
             border: sold
                 ? null
                 : Border.all(color: AppColors.success, width: 1.2),
@@ -425,9 +427,9 @@ class _SeatSquare extends StatelessWidget {
             '${seat.number}',
             style: TextStyle(
               color: sold
-                  ? Colors.white
+                  ? AppColors.surface
                   : selected
-                  ? Colors.white
+                  ? AppColors.ink
                   : AppColors.muted,
               fontSize: 10,
             ),
@@ -482,9 +484,13 @@ class _SeatLegend extends StatelessWidget {
     return const Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _LegendItem(label: 'Available', color: Colors.white, outlined: true),
+        _LegendItem(
+          label: 'Available',
+          color: AppColors.surface,
+          outlined: true,
+        ),
         SizedBox(width: 20),
-        _LegendItem(label: 'Selected', color: AppColors.success),
+        _LegendItem(label: 'Selected', color: AppColors.accent),
         SizedBox(width: 20),
         _LegendItem(label: 'Sold', color: Color(0xFFE7E7E7)),
       ],
@@ -570,10 +576,33 @@ class _SeatCountSheetState extends State<_SeatCountSheet> {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 28),
-            Image.asset(
-              'assets/images/scooter.jpg',
+            Container(
               height: 132,
-              fit: BoxFit.contain,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                gradient: const LinearGradient(
+                  colors: [AppColors.midnight, AppColors.primary],
+                ),
+              ),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.local_movies_outlined,
+                    color: AppColors.accent,
+                    size: 44,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Pick your perfect seats',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             SizedBox(

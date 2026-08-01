@@ -41,7 +41,7 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
         children: [
           const DesktopHeader(),
           ColoredBox(
-            color: Colors.white,
+            color: AppColors.surface,
             child: TicketflixPageHeader(
               title: movie.title,
               subtitle: 'Movie runtime: ${movie.runtime}',
@@ -64,7 +64,7 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
             onSelected: (value) => setState(() => selectedDay = value),
           ),
           Container(
-            color: Colors.white,
+            color: AppColors.surface,
             padding: const EdgeInsets.symmetric(vertical: 14),
             child: ContentWidth(
               child: Row(
@@ -176,7 +176,7 @@ class _DateStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 98,
-      color: Colors.white,
+      color: AppColors.surface,
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: Breakpoints.maxContent),
@@ -195,7 +195,7 @@ class _DateStrip extends StatelessWidget {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 180),
                     width: context.isMobile ? 74 : 90,
-                    color: selected ? const Color(0xFFED4C65) : Colors.white,
+                    color: selected ? AppColors.primary : AppColors.surface,
                     padding: const EdgeInsets.symmetric(vertical: 9),
                     child: Column(
                       children: [
@@ -247,7 +247,7 @@ class _CinemaCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(context.isMobile ? 12 : 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(7),
         boxShadow: const [
           BoxShadow(
@@ -267,13 +267,13 @@ class _CinemaCard extends StatelessWidget {
                 height: 42,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFE8E8E8)),
+                  border: Border.all(color: AppColors.accent),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
                   'PVR',
                   style: TextStyle(
-                    color: Color(0xFFD4B21E),
+                    color: AppColors.ink,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

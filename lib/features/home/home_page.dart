@@ -25,7 +25,7 @@ class HomePage extends ConsumerWidget {
           : NavigationBar(
               height: 72,
               selectedIndex: 0,
-              indicatorColor: const Color(0xFFFFE6EA),
+              indicatorColor: AppColors.softAccent,
               onDestinationSelected: (index) {
                 if (index == 3) {
                   context.push('/movies');
@@ -78,7 +78,7 @@ class HomePage extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 22),
+                        const SizedBox(height: 36),
                         _WelcomeHeader(
                           onProfileTap: () => _comingSoon(context, 'Sign in'),
                         ),
@@ -91,7 +91,7 @@ class HomePage extends ConsumerWidget {
                 SliverToBoxAdapter(
                   child: ContentWidth(
                     padding: EdgeInsets.symmetric(
-                      horizontal: context.isDesktop ? 24 : 0,
+                      horizontal: context.isDesktop ? 24 : 16,
                     ),
                     child: Column(
                       children: [
@@ -106,15 +106,63 @@ class HomePage extends ConsumerWidget {
                           },
                         ),
                         const SizedBox(height: 22),
-                        const _PromoCarousel(),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 0),
+                          child: _PromoCarousel(
+                            imageUrl:
+                                movies.first.bannerUrl ??
+                                movies.first.posterUrl,
+                          ),
+                        ),
                         const SizedBox(height: 14),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            'assets/images/live_offer.jpg',
-                            width: double.infinity,
-                            height: context.isDesktop ? 156 : 68,
-                            fit: BoxFit.cover,
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: context.isDesktop ? 156 : 68,
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  TicketflixRemoteImage(
+                                    url:
+                                        movies[1].bannerUrl ??
+                                        movies[1].posterUrl,
+                                  ),
+                                  DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          AppColors.midnight.withValues(
+                                            alpha: .9,
+                                          ),
+                                          Colors.transparent,
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                      ),
+                                    ),
+                                  ),
+                                  const Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                      ),
+                                      child: Text(
+                                        'CLASSIC SCREENINGS  •  FROM ₹149',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: .4,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 26),
@@ -287,7 +335,7 @@ class _CategoryRail extends StatelessWidget {
     return SizedBox(
       height: 78,
       child: ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: context.isDesktop ? 0 : 16),
+        padding: EdgeInsets.zero,
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
         separatorBuilder: (_, _) =>
@@ -301,7 +349,19 @@ class _CategoryRail extends StatelessWidget {
               width: 64,
               child: Column(
                 children: [
-                  Icon(item.$1, color: AppColors.primary, size: 31),
+                  Container(
+                    width: 54,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      color: item.$2 == 'Movies'
+                          ? AppColors.softAccent
+                          : AppColors.surfaceTint,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    alignment: Alignment.center,
+                    child: Icon(item.$1, color: AppColors.primary, size: 27),
+                  ),
                   const SizedBox(height: 7),
                   Text(
                     item.$2,
@@ -320,7 +380,9 @@ class _CategoryRail extends StatelessWidget {
 }
 
 class _PromoCarousel extends StatefulWidget {
-  const _PromoCarousel();
+  const _PromoCarousel({required this.imageUrl});
+
+  final String imageUrl;
 
   @override
   State<_PromoCarousel> createState() => _PromoCarouselState();
@@ -340,16 +402,13 @@ class _PromoCarouselState extends State<_PromoCarousel> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(13),
-                child: Image.asset(
-                  'assets/images/stream_banner.jpg',
-                  fit: BoxFit.cover,
-                ),
+                child: TicketflixRemoteImage(url: widget.imageUrl),
               ),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(13),
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF20284A), Color(0xFF6C1D3D)],
+                    colors: [AppColors.midnight, AppColors.primary],
                   ),
                 ),
                 child: const Center(

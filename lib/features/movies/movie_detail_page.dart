@@ -126,8 +126,8 @@ class _Hero extends StatelessWidget {
       aspectRatio: 1.78,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: Image.asset(
-          movie.heroAsset ?? movie.posterAsset,
+        child: TicketflixRemoteImage(
+          url: movie.bannerUrl ?? movie.posterUrl,
           fit: BoxFit.cover,
         ),
       ),
@@ -155,7 +155,7 @@ class _MovieInformation extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xFFF8FAF7), Color(0xFFFFF5F6)],
+              colors: [AppColors.softAccent, AppColors.coralWash],
             ),
             borderRadius: BorderRadius.circular(10),
           ),
@@ -229,7 +229,7 @@ class _MovieInformation extends StatelessWidget {
         Container(
           height: 48,
           decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFFB7C8F5)),
+            border: Border.all(color: AppColors.accent),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -238,7 +238,7 @@ class _MovieInformation extends StatelessWidget {
                 height: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: const BoxDecoration(
-                  color: Color(0xFF5D8DF4),
+                  color: AppColors.ink,
                   borderRadius: BorderRadius.horizontal(
                     left: Radius.circular(7),
                   ),
@@ -287,8 +287,8 @@ class _MovieInformation extends StatelessWidget {
               width: 260,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF9E8),
-                border: Border.all(color: const Color(0xFFFFE6A6)),
+                color: AppColors.softAccent,
+                border: Border.all(color: AppColors.accent),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Row(
@@ -325,11 +325,16 @@ class _MovieInformation extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      cast[index].asset,
+                    child: Container(
                       width: 104,
                       height: 88,
-                      fit: BoxFit.cover,
+                      color: AppColors.surfaceTint,
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        Icons.person_outline_rounded,
+                        color: AppColors.muted,
+                        size: 38,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -363,7 +368,7 @@ class _MetadataLabel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F2F3),
+        color: AppColors.surfaceTint,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(

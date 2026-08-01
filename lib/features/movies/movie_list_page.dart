@@ -124,7 +124,7 @@ class _MovieListPageState extends ConsumerState<MovieListPage> {
                               return ChoiceChip(
                                 label: Text(filter),
                                 selected: selectedFilter == filter,
-                                selectedColor: const Color(0xFFFFE7EC),
+                                selectedColor: AppColors.softAccent,
                                 onSelected: (_) =>
                                     setState(() => selectedFilter = filter),
                               );
@@ -139,7 +139,11 @@ class _MovieListPageState extends ConsumerState<MovieListPage> {
                             height: 74,
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE83254),
+                              gradient: const LinearGradient(
+                                colors: [AppColors.midnight, AppColors.primary],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Row(

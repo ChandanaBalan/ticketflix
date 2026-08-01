@@ -28,7 +28,9 @@ class TicketflixButton extends StatelessWidget {
         label: Text(label, style: const TextStyle(fontSize: 16)),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
           disabledBackgroundColor: AppColors.border,
+          disabledForegroundColor: AppColors.muted,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
@@ -54,7 +56,7 @@ class TicketflixPageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: AppColors.surface,
       child: SafeArea(
         bottom: false,
         child: ContentWidth(
@@ -112,7 +114,7 @@ class DesktopHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!context.isDesktop) return const SizedBox.shrink();
     return Material(
-      color: const Color(0xFF222539),
+      color: AppColors.midnight,
       child: ContentWidth(
         child: SizedBox(
           height: 72,
@@ -202,10 +204,9 @@ class MoviePosterCard extends StatelessWidget {
                 aspectRatio: .675,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(
-                    movie.posterAsset,
+                  child: TicketflixRemoteImage(
+                    url: movie.posterUrl,
                     fit: BoxFit.cover,
-                    filterQuality: FilterQuality.medium,
                   ),
                 ),
               ),
@@ -252,6 +253,52 @@ class MoviePosterCard extends StatelessWidget {
   }
 }
 
+class TicketflixRemoteImage extends StatelessWidget {
+  const TicketflixRemoteImage({
+    required this.url,
+    this.fit = BoxFit.cover,
+    super.key,
+  });
+
+  final String url;
+  final BoxFit fit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.network(
+      url,
+      fit: fit,
+      filterQuality: FilterQuality.medium,
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return ColoredBox(
+          color: AppColors.midnight,
+          child: Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              value: progress.expectedTotalBytes == null
+                  ? null
+                  : progress.cumulativeBytesLoaded /
+                        progress.expectedTotalBytes!,
+              color: AppColors.accent,
+            ),
+          ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) => const ColoredBox(
+        color: AppColors.midnight,
+        child: Center(
+          child: Icon(
+            Icons.local_movies_outlined,
+            color: AppColors.accent,
+            size: 32,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 Future<T?> showTicketflixSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
@@ -276,7 +323,7 @@ Future<T?> showTicketflixSheet<T>({
     isScrollControlled: true,
     isDismissible: isDismissible,
     useSafeArea: true,
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
     ),
@@ -295,7 +342,7 @@ class SheetHandle extends StatelessWidget {
         height: 5,
         margin: const EdgeInsets.only(top: 12, bottom: 18),
         decoration: BoxDecoration(
-          color: const Color(0xFFE2E2E2),
+          color: AppColors.border,
           borderRadius: BorderRadius.circular(99),
         ),
       ),

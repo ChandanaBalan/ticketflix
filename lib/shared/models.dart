@@ -8,18 +8,18 @@ class Movie {
   const Movie({
     required this.id,
     required this.title,
-    required this.posterAsset,
+    required this.posterUrl,
     required this.likes,
     required this.genres,
-    this.heroAsset,
+    this.bannerUrl,
     this.runtime = '2h 25m',
     this.certificate = 'UA13+',
   });
 
   final String id;
   final String title;
-  final String posterAsset;
-  final String? heroAsset;
+  final String posterUrl;
+  final String? bannerUrl;
   final String likes;
   final List<String> genres;
   final String runtime;
@@ -27,15 +27,10 @@ class Movie {
 }
 
 class CastMember {
-  const CastMember({
-    required this.name,
-    required this.role,
-    required this.asset,
-  });
+  const CastMember({required this.name, required this.role});
 
   final String name;
   final String role;
-  final String asset;
 }
 
 class Showtime {

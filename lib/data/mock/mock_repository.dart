@@ -5,60 +5,81 @@ class MockRepository {
 
   List<Movie> get movies => const [
     Movie(
-      id: 'balan-the-boy',
-      title: 'Balan: The Boy',
-      posterAsset: 'assets/images/balan.jpg',
-      likes: '25.2K+',
-      genres: ['Drama', 'Family'],
+      id: 'chithram',
+      title: 'Chithram',
+      posterUrl:
+          'https://i.pinimg.com/474x/af/b1/63/afb16363561e9030a1514a5e0f99444f.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/50/54/b4/5054b4af988a1c4f88424193eac21720.jpg',
+      likes: '42.1K+',
+      genres: ['Classic', 'Comedy'],
+      runtime: '2h 30m',
     ),
     Movie(
-      id: 'unmadham',
-      title: 'Unmadham',
-      posterAsset: 'assets/images/unmadham.jpg',
-      likes: '22.2K+',
-      genres: ['Crime', 'Thriller'],
+      id: 'premam',
+      title: 'Premam',
+      posterUrl:
+          'https://i.pinimg.com/736x/f6/cd/6f/f6cd6f2a9f655ebe75247d0048bd4d89.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/76/7b/05/767b058fa36d7bc40a2251892045616e.jpg',
+      likes: '86.4K+',
+      genres: ['Romance', 'Drama'],
+      runtime: '2h 36m',
     ),
     Movie(
-      id: 'spider-man-brand-new-day',
-      title: 'Spider-Man: Brand New Day',
-      posterAsset: 'assets/images/spiderman_hero.jpg',
-      heroAsset: 'assets/images/spiderman_hero.jpg',
-      likes: '1M+',
-      genres: ['Action', 'Adventure', 'Sci-Fi'],
+      id: 'kumbalangi-nights',
+      title: 'Kumbalangi Nights',
+      posterUrl:
+          'https://i.pinimg.com/736x/84/bd/24/84bd24ad2f7360cc3c4226aad9183618.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/39/29/d7/3929d7573f5dc0f9add74043806ee28f.jpg',
+      likes: '31.8K+',
+      genres: ['Comedy', 'Romance'],
+      runtime: '2h 38m',
     ),
     Movie(
-      id: 'lurk',
-      title: 'Lurk',
-      posterAsset: 'assets/images/lurk.jpg',
-      likes: '18.8K+',
-      genres: ['Horror', 'Mystery'],
+      id: 'nadodikkattu',
+      title: 'Nadodikkattu',
+      posterUrl:
+          'https://i.pinimg.com/736x/06/25/99/0625997bf708e7cf115c5ba1947bff2a.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/d3/de/36/d3de361bb0f96948deef5ef54d6e34a9.jpg',
+      likes: '18.6K+',
+      genres: ['Mystery', 'Drama'],
+      runtime: '2h 10m',
+    ),
+    Movie(
+      id: 'bangalore-days',
+      title: 'Bangalore Days',
+      posterUrl:
+          'https://i.pinimg.com/736x/ee/b3/94/eeb394ce18818d3fe5ee423e3feffb4e.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/d4/69/ff/d469ff3099c9ccec0926188398f4f856.jpg',
+      likes: '74.5K+',
+      genres: ['Drama', 'Romance'],
+      runtime: '2h 52m',
+    ),
+    Movie(
+      id: 'ambili',
+      title: 'Ambili',
+      posterUrl:
+          'https://i.pinimg.com/736x/65/88/94/6588945f9970de031a7e1a7dde580824.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/6f/b3/b1/6fb3b143e6547b03eea4ed5f6e46043b.jpg',
+      likes: '28.9K+',
+      genres: ['Romance', 'Family'],
+      runtime: '2h 22m',
     ),
   ];
 
   Movie movie(String id) =>
-      movies.firstWhere((movie) => movie.id == id, orElse: () => movies[2]);
+      movies.firstWhere((movie) => movie.id == id, orElse: () => movies[0]);
 
   List<CastMember> get cast => const [
-    CastMember(
-      name: 'Tom Holland',
-      role: 'Peter Parker',
-      asset: 'assets/images/cast_tom.jpg',
-    ),
-    CastMember(
-      name: 'Zendaya',
-      role: 'MJ',
-      asset: 'assets/images/cast_zendaya.jpg',
-    ),
-    CastMember(
-      name: 'Sadie Sink',
-      role: 'Cast',
-      asset: 'assets/images/cast_sadie.jpg',
-    ),
-    CastMember(
-      name: 'Jacob Batalon',
-      role: 'Ned',
-      asset: 'assets/images/cast_jacob.jpg',
-    ),
+    CastMember(name: 'Mohanlal', role: 'Lead'),
+    CastMember(name: 'Shobana', role: 'Lead'),
+    CastMember(name: 'Nivin Pauly', role: 'Lead'),
+    CastMember(name: 'Sai Pallavi', role: 'Cast'),
   ];
 
   List<Cinema> get cinemas => const [
