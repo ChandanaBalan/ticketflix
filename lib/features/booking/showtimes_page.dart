@@ -27,13 +27,8 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
     final repository = ref.watch(mockRepositoryProvider);
     final movie = repository.movie(widget.movieId);
     final draft = ref.watch(bookingProvider);
-    final formatLabel = switch (draft.format) {
-      MovieFormat.twoD => '2D',
-      MovieFormat.threeD => '3D',
-      MovieFormat.fourDx3D => '4DX 3D',
-    };
-    final languageLabel =
-        draft.language.name[0].toUpperCase() + draft.language.name.substring(1);
+    final formatLabel = draft.format.label;
+    final languageLabel = draft.language.label;
 
     return Scaffold(
       backgroundColor: AppColors.surfaceTint,
@@ -83,6 +78,24 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            color: AppColors.surface,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: ContentWidth(
+              padding: EdgeInsets.zero,
+              child: Text(
+                movie.description,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: AppColors.muted,
+                  fontSize: 13,
+                  height: 1.35,
+                ),
               ),
             ),
           ),

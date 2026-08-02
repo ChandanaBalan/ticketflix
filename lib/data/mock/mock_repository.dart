@@ -13,6 +13,16 @@ class MockRepository {
           'https://i.pinimg.com/736x/50/54/b4/5054b4af988a1c4f88424193eac21720.jpg',
       likes: '42.1K+',
       genres: ['Classic', 'Comedy'],
+      description:
+          'A charming classic about an unexpected marriage of convenience that turns into a warm, hilarious journey of trust, friendship, and love.',
+      languages: [MovieLanguage.malayalam],
+      formats: [MovieFormat.twoD],
+      cast: [
+        CastMember(name: 'Mohanlal', role: 'Vishnu'),
+        CastMember(name: 'Ranjini', role: 'Kalyani'),
+        CastMember(name: 'Nedumudi Venu', role: 'Cast'),
+        CastMember(name: 'Jagathy Sreekumar', role: 'Cast'),
+      ],
       runtime: '2h 30m',
     ),
     Movie(
@@ -24,6 +34,16 @@ class MockRepository {
           'https://i.pinimg.com/736x/76/7b/05/767b058fa36d7bc40a2251892045616e.jpg',
       likes: '86.4K+',
       genres: ['Romance', 'Drama'],
+      description:
+          'George David grows through three chapters of love, heartbreak, and self-discovery as life takes him from his hometown to new beginnings.',
+      languages: [MovieLanguage.malayalam],
+      formats: [MovieFormat.twoD, MovieFormat.threeD],
+      cast: [
+        CastMember(name: 'Nivin Pauly', role: 'George'),
+        CastMember(name: 'Sai Pallavi', role: 'Malar'),
+        CastMember(name: 'Anupama Parameswaran', role: 'Mary'),
+        CastMember(name: 'Madonna Sebastian', role: 'Celine'),
+      ],
       runtime: '2h 36m',
     ),
     Movie(
@@ -35,6 +55,16 @@ class MockRepository {
           'https://i.pinimg.com/736x/39/29/d7/3929d7573f5dc0f9add74043806ee28f.jpg',
       likes: '31.8K+',
       genres: ['Comedy', 'Romance'],
+      description:
+          'Four brothers with very different personalities navigate family tensions, new love, and second chances in the beautiful coastal village of Kumbalangi.',
+      languages: [MovieLanguage.malayalam],
+      formats: [MovieFormat.twoD],
+      cast: [
+        CastMember(name: 'Fahadh Faasil', role: 'Shammi'),
+        CastMember(name: 'Soubin Shahir', role: 'Saji'),
+        CastMember(name: 'Shane Nigam', role: 'Bobby'),
+        CastMember(name: 'Anna Ben', role: 'Baby'),
+      ],
       runtime: '2h 38m',
     ),
     Movie(
@@ -46,6 +76,16 @@ class MockRepository {
           'https://i.pinimg.com/736x/d3/de/36/d3de361bb0f96948deef5ef54d6e34a9.jpg',
       likes: '18.6K+',
       genres: ['Mystery', 'Drama'],
+      description:
+          'When two jobless friends are tricked into believing they are headed to Dubai, their search for a better life becomes a wonderfully comic adventure.',
+      languages: [MovieLanguage.malayalam],
+      formats: [MovieFormat.twoD],
+      cast: [
+        CastMember(name: 'Mohanlal', role: 'Dasan'),
+        CastMember(name: 'Sreenivasan', role: 'Vijayan'),
+        CastMember(name: 'Shobana', role: 'Radha'),
+        CastMember(name: 'Thilakan', role: 'Cast'),
+      ],
       runtime: '2h 10m',
     ),
     Movie(
@@ -57,6 +97,16 @@ class MockRepository {
           'https://i.pinimg.com/736x/d4/69/ff/d469ff3099c9ccec0926188398f4f856.jpg',
       likes: '74.5K+',
       genres: ['Drama', 'Romance'],
+      description:
+          'Three cousins reunite in Bangalore and find their ideas of love, ambition, and family changing as they chase new dreams in the city.',
+      languages: [MovieLanguage.malayalam],
+      formats: [MovieFormat.twoD, MovieFormat.threeD],
+      cast: [
+        CastMember(name: 'Dulquer Salmaan', role: 'Arjun'),
+        CastMember(name: 'Nivin Pauly', role: 'Kuttan'),
+        CastMember(name: 'Nazriya Nazim', role: 'Divya'),
+        CastMember(name: 'Parvathy Thiruvothu', role: 'Sarah'),
+      ],
       runtime: '2h 52m',
     ),
     Movie(
@@ -68,19 +118,22 @@ class MockRepository {
           'https://i.pinimg.com/736x/6f/b3/b1/6fb3b143e6547b03eea4ed5f6e46043b.jpg',
       likes: '28.9K+',
       genres: ['Romance', 'Family'],
+      description:
+          'A kind-hearted free spirit finds his world changing when a childhood friend returns, bringing old memories, new feelings, and a chance to grow up.',
+      languages: [MovieLanguage.malayalam],
+      formats: [MovieFormat.twoD, MovieFormat.threeD],
+      cast: [
+        CastMember(name: 'Soubin Shahir', role: 'Ambili'),
+        CastMember(name: 'Tanvi Ram', role: 'Teena'),
+        CastMember(name: 'Naveen Nazim', role: 'Boban'),
+        CastMember(name: 'Jaffer Idukki', role: 'Cast'),
+      ],
       runtime: '2h 22m',
     ),
   ];
 
   Movie movie(String id) =>
       movies.firstWhere((movie) => movie.id == id, orElse: () => movies[0]);
-
-  List<CastMember> get cast => const [
-    CastMember(name: 'Mohanlal', role: 'Lead'),
-    CastMember(name: 'Shobana', role: 'Lead'),
-    CastMember(name: 'Nivin Pauly', role: 'Lead'),
-    CastMember(name: 'Sai Pallavi', role: 'Cast'),
-  ];
 
   List<Cinema> get cinemas => const [
     Cinema(

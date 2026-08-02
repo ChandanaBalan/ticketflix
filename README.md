@@ -25,7 +25,8 @@ The project is organized by feature under `lib/features`, with application
 routing and theming in `lib/app`, reusable visual primitives in `lib/core`, mock
 data in `lib/data`, and API-ready domain models in `lib/shared`.
 
-`MockRepository` is the temporary source for movies, cast, cinemas, and
+`MockRepository` is the temporary source for movies, their images and metadata
+(genres, descriptions, languages, formats, runtime, and cast), cinemas, and
 showtimes. A future backend integration should implement the same repository
 boundary and map API payloads to the existing domain models. `BookingDraft` is
 the single source of truth for the selected format, showtime, ticket count, and

@@ -87,7 +87,6 @@ class MovieDetailPage extends ConsumerWidget {
                               padding: const EdgeInsets.only(top: 30),
                               child: _MovieInformation(
                                 movie: movie,
-                                cast: repository.cast,
                                 onBook: () => _openFormats(context, ref, movie),
                               ),
                             ),
@@ -99,11 +98,7 @@ class MovieDetailPage extends ConsumerWidget {
                           const SizedBox(height: 14),
                           _Hero(movie: movie),
                           const SizedBox(height: 14),
-                          _MovieInformation(
-                            movie: movie,
-                            cast: repository.cast,
-                            onBook: null,
-                          ),
+                          _MovieInformation(movie: movie, onBook: null),
                         ],
                       ),
               ),
@@ -136,14 +131,9 @@ class _Hero extends StatelessWidget {
 }
 
 class _MovieInformation extends StatelessWidget {
-  const _MovieInformation({
-    required this.movie,
-    required this.cast,
-    required this.onBook,
-  });
+  const _MovieInformation({required this.movie, required this.onBook});
 
   final Movie movie;
-  final List<CastMember> cast;
   final VoidCallback? onBook;
 
   @override
@@ -199,30 +189,26 @@ class _MovieInformation extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 10),
-        const Wrap(
+        Wrap(
           spacing: 7,
           runSpacing: 7,
           children: [
-            _MetadataLabel('2D, 3D SCREEN X, EPIQ, DOLBY CINEMA 3D, +8'),
-            _MetadataLabel('ENGLISH, MALAYALAM, +4'),
+            for (final format in movie.formats) _MetadataLabel(format.label),
+            for (final language in movie.languages)
+              _MetadataLabel(language.label),
           ],
         ),
         const SizedBox(height: 12),
-        RichText(
-          text: TextSpan(
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: AppColors.muted),
-            children: const [
-              TextSpan(
-                text:
-                    "Accessibility: Closed Captions (CC) & Audio Description (AD) available. Download the 'MovieReading' ",
-              ),
-              TextSpan(
-                text: '...Read more',
-                style: TextStyle(color: AppColors.primary),
-              ),
-            ],
+        Text(
+          'About ${movie.title}',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          movie.description,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: AppColors.muted,
+            height: 1.45,
           ),
         ),
         const SizedBox(height: 14),
@@ -317,7 +303,7 @@ class _MovieInformation extends StatelessWidget {
           height: 126,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            itemCount: cast.length,
+            itemCount: movie.cast.length,
             separatorBuilder: (_, _) => const SizedBox(width: 12),
             itemBuilder: (context, index) => SizedBox(
               width: 104,
@@ -339,10 +325,19 @@ class _MovieInformation extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    cast[index].name,
+                    movie.cast[index].name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 12),
+                  ),
+                  Text(
+                    movie.cast[index].role,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.muted,
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
@@ -411,26 +406,14 @@ class _FormatSheet extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
-            _LanguageFormats(
-              title: 'MALAYALAM',
-              choices: const [
-                _FormatChoice(MovieLanguage.malayalam, MovieFormat.threeD),
-              ],
-            ),
-            _LanguageFormats(
-              title: 'ENGLISH',
-              choices: const [
-                _FormatChoice(MovieLanguage.english, MovieFormat.fourDx3D),
-                _FormatChoice(MovieLanguage.english, MovieFormat.threeD),
-                _FormatChoice(MovieLanguage.english, MovieFormat.twoD),
-              ],
-            ),
-            _LanguageFormats(
-              title: 'HINDI',
-              choices: const [
-                _FormatChoice(MovieLanguage.hindi, MovieFormat.threeD),
-              ],
-            ),
+            for (final language in movie.languages)
+              _LanguageFormats(
+                title: language.label,
+                choices: [
+                  for (final format in movie.formats)
+                    _FormatChoice(language, format),
+                ],
+              ),
             const SizedBox(height: 22),
           ],
         ),
@@ -444,12 +427,6 @@ class _LanguageFormats extends StatelessWidget {
 
   final String title;
   final List<_FormatChoice> choices;
-
-  String _formatLabel(MovieFormat format) => switch (format) {
-    MovieFormat.twoD => '2D',
-    MovieFormat.threeD => '3D',
-    MovieFormat.fourDx3D => '4DX 3D',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -477,7 +454,7 @@ class _LanguageFormats extends StatelessWidget {
               for (final choice in choices)
                 OutlinedButton(
                   key: ValueKey(
-                    'format-${title.toLowerCase()}-${_formatLabel(choice.format)}',
+                    'format-${title.toLowerCase()}-${choice.format.label}',
                   ),
                   onPressed: () => Navigator.of(context).pop(choice),
                   style: OutlinedButton.styleFrom(
@@ -489,21 +466,7 @@ class _LanguageFormats extends StatelessWidget {
                     side: const BorderSide(color: AppColors.border),
                     shape: const StadiumBorder(),
                   ),
-                  child: Text(_formatLabel(choice.format)),
-                ),
-              if (title == 'ENGLISH')
-                OutlinedButton(
-                  onPressed: () => Navigator.of(context).pop(choices[1]),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 13,
-                    ),
-                    side: const BorderSide(color: AppColors.border),
-                    shape: const StadiumBorder(),
-                  ),
-                  child: const Text('Select all'),
+                  child: Text(choice.format.label),
                 ),
             ],
           ),
