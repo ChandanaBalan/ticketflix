@@ -153,7 +153,7 @@ class HomePage extends ConsumerWidget {
                       children: [
                         const SizedBox(height: 36),
                         _WelcomeHeader(
-                          onProfileTap: () => _comingSoon(context, 'Sign in'),
+                          onProfileTap: () => context.push('/login'),
                         ),
                         const SizedBox(height: 12),
                       ],

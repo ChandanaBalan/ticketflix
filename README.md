@@ -5,9 +5,15 @@ discovery and ticket-booking experiences. Phase 1 is entirely frontend-driven:
 all content comes from local mock repositories and no authentication, API,
 database, payment, or seat-hold service is connected.
 
+The startup flow is splash screen → authentication → home. Users can sign in,
+create an account, use phone OTP authentication, or continue as a guest.
+
 ## Routes
 
 - `/` — discovery home
+- `/login` — sign in
+- `/register` — create an account
+- `/forgot-password` — request a password reset link
 - `/movies` — now-showing catalogue
 - `/movies/:movieId` — movie details and language/format selection
 - `/movies/:movieId/shows` — date, cinema, and showtime selection

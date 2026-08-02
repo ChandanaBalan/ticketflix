@@ -14,6 +14,11 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: TicketflixApp()));
     await tester.pumpAndSettle();
 
+    expect(find.text('Welcome back'), findsOneWidget);
+    expect(find.text('Continue as guest'), findsOneWidget);
+    await tester.tap(find.text('Continue as guest'));
+    await tester.pumpAndSettle();
+
     expect(find.text('It All Starts Here!'), findsOneWidget);
     expect(find.text('Recommended Movies'), findsOneWidget);
     expect(find.text('Search'), findsOneWidget);

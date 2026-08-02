@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../app/theme.dart';
 import '../../core/responsive/responsive.dart';
@@ -158,7 +159,7 @@ class DesktopHeader extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: () => context.push('/login'),
                 icon: const Icon(Icons.person_outline),
                 label: const Text('Sign in'),
                 style: OutlinedButton.styleFrom(
