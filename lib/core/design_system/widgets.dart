@@ -65,12 +65,21 @@ class TicketflixPageHeader extends StatelessWidget {
             child: Row(
               children: [
                 if (showBack)
-                  IconButton(
-                    tooltip: 'Back',
-                    onPressed: () => Navigator.of(context).maybePop(),
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      size: 22,
+                  Transform.translate(
+                    offset: const Offset(-8, 0),
+                    child: IconButton(
+                      tooltip: 'Back',
+                      onPressed: () => Navigator.of(context).maybePop(),
+                      padding: EdgeInsets.zero,
+                      visualDensity: VisualDensity.compact,
+                      constraints: const BoxConstraints.tightFor(
+                        width: 40,
+                        height: 44,
+                      ),
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 19,
+                      ),
                     ),
                   )
                 else
