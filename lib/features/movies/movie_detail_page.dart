@@ -36,84 +36,89 @@ class MovieDetailPage extends ConsumerWidget {
     final movieState = ref.watch(movieDetailViewModelProvider(movieId));
 
     return movieState.when(
-      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (error, _) => Scaffold(body: Center(child: Text('Unable to load movie: $error'))),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, _) =>
+          Scaffold(body: Center(child: Text('Unable to load movie: $error'))),
       data: (movie) {
         if (movie == null) {
           return const Scaffold(body: Center(child: Text('Movie not found')));
         }
 
         return Scaffold(
-      bottomNavigationBar: isDesktop
-          ? null
-          : SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                child: TicketflixButton(
-                  label: 'Book tickets',
-                  onPressed: () => _openFormats(context, ref, movie),
+          bottomNavigationBar: isDesktop
+              ? null
+              : SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                    child: TicketflixButton(
+                      label: 'Book tickets',
+                      onPressed: () => _openFormats(context, ref, movie),
+                    ),
+                  ),
                 ),
+          body: Column(
+            children: [
+              DesktopHeader(onSignIn: () => context.push('/login')),
+              TicketflixPageHeader(
+                title: movie.title,
+                actions: [
+                  IconButton(
+                    tooltip: 'Share',
+                    onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Share link copied.')),
+                    ),
+                    icon: const Icon(Icons.share_outlined),
+                  ),
+                ],
               ),
-            ),
-      body: Column(
-        children: [
-          DesktopHeader(onSignIn: () => context.push('/login')),
-          TicketflixPageHeader(
-            title: movie.title,
-            actions: [
-              IconButton(
-                tooltip: 'Share',
-                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Share link copied.')),
+              const Divider(height: 1),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(bottom: isDesktop ? 48 : 16),
+                  child: ContentWidth(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isDesktop ? 24 : 16,
+                    ),
+                    child: isDesktop
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 5,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 30),
+                                  child: _Hero(movie: movie),
+                                ),
+                              ),
+                              const SizedBox(width: 42),
+                              Expanded(
+                                flex: 5,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 30),
+                                  child: _MovieInformation(
+                                    movie: movie,
+                                    onBook: () =>
+                                        _openFormats(context, ref, movie),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              const SizedBox(height: 14),
+                              _Hero(movie: movie),
+                              const SizedBox(height: 14),
+                              _MovieInformation(movie: movie, onBook: null),
+                            ],
+                          ),
+                  ),
                 ),
-                icon: const Icon(Icons.share_outlined),
               ),
             ],
           ),
-          const Divider(height: 1),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.only(bottom: isDesktop ? 48 : 16),
-              child: ContentWidth(
-                padding: EdgeInsets.symmetric(horizontal: isDesktop ? 24 : 16),
-                child: isDesktop
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 5,
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 30),
-                              child: _Hero(movie: movie),
-                            ),
-                          ),
-                          const SizedBox(width: 42),
-                          Expanded(
-                            flex: 5,
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 30),
-                              child: _MovieInformation(
-                                movie: movie,
-                                onBook: () => _openFormats(context, ref, movie),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          const SizedBox(height: 14),
-                          _Hero(movie: movie),
-                          const SizedBox(height: 14),
-                          _MovieInformation(movie: movie, onBook: null),
-                        ],
-                      ),
-              ),
-            ),
-          ),
-        ],
-      ),
         );
       },
     );
@@ -154,8 +159,11 @@ class _MovieInformation extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [AppColors.softAccent, AppColors.coralWash],
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.secondaryContainer,
+                Theme.of(context).colorScheme.tertiaryContainer,
+              ],
             ),
             borderRadius: BorderRadius.circular(10),
           ),
@@ -217,7 +225,7 @@ class _MovieInformation extends StatelessWidget {
         Text(
           movie.description,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.muted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             height: 1.45,
           ),
         ),
@@ -233,8 +241,8 @@ class _MovieInformation extends StatelessWidget {
               Container(
                 height: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: const BoxDecoration(
-                  color: AppColors.ink,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onSurface,
                   borderRadius: BorderRadius.horizontal(
                     left: Radius.circular(7),
                   ),
@@ -283,7 +291,7 @@ class _MovieInformation extends StatelessWidget {
               width: 260,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.softAccent,
+                color: Theme.of(context).colorScheme.secondaryContainer,
                 border: Border.all(color: AppColors.accent),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -324,11 +332,13 @@ class _MovieInformation extends StatelessWidget {
                     child: Container(
                       width: 104,
                       height: 88,
-                      color: AppColors.surfaceTint,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
                       alignment: Alignment.center,
-                      child: const Icon(
+                      child: Icon(
                         Icons.person_outline_rounded,
-                        color: AppColors.muted,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 38,
                       ),
                     ),
@@ -344,8 +354,8 @@ class _MovieInformation extends StatelessWidget {
                     movie.cast[index].role,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.muted,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 11,
                     ),
                   ),
@@ -373,7 +383,7 @@ class _MetadataLabel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.surfaceTint,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
@@ -445,12 +455,12 @@ class _LanguageFormats extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          color: AppColors.surfaceTint,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
           child: Text(
             title,
-            style: const TextStyle(
-              color: AppColors.muted,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -473,7 +483,9 @@ class _LanguageFormats extends StatelessWidget {
                       horizontal: 22,
                       vertical: 13,
                     ),
-                    side: const BorderSide(color: AppColors.border),
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
                     shape: const StadiumBorder(),
                   ),
                   child: Text(choice.format.label),

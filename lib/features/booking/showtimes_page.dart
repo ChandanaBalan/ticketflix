@@ -38,7 +38,9 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
       builder: (context) => _SortSheet(selected: current.sort),
     );
     if (selected != null && mounted) {
-      ref.read(showtimesViewModelProvider(widget.movieId).notifier).setSort(selected);
+      ref
+          .read(showtimesViewModelProvider(widget.movieId).notifier)
+          .setSort(selected);
     }
   }
 
@@ -53,7 +55,9 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
       ),
     );
     if (selected == null || !mounted) return;
-    final viewModel = ref.read(showtimesViewModelProvider(widget.movieId).notifier);
+    final viewModel = ref.read(
+      showtimesViewModelProvider(widget.movieId).notifier,
+    );
     viewModel
       ..setSpecialFormats(selected.specialFormatsOnly)
       ..setCancellable(selected.cancellableOnly)
@@ -70,7 +74,9 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(showtimesViewModelProvider(widget.movieId));
-    final viewModel = ref.read(showtimesViewModelProvider(widget.movieId).notifier);
+    final viewModel = ref.read(
+      showtimesViewModelProvider(widget.movieId).notifier,
+    );
     final movie = state.movie;
     final draft = ref.watch(bookingSessionProvider);
     final formatLabel = draft.format.label;
@@ -81,40 +87,47 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.surfaceTint,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       body: Column(
         children: [
           DesktopHeader(onSignIn: () => context.push('/login')),
           ColoredBox(
-            color: AppColors.surface,
+            color: Theme.of(context).colorScheme.surface,
             child: TicketflixPageHeader(
-              title: movie.title,
-              subtitle: 'Movie runtime: ${movie.runtime}',
+              title: state.searching ? '' : movie.title,
+              subtitle: state.searching
+                  ? null
+                  : 'Movie runtime: ${movie.runtime}',
               actions: [
                 if (state.searching)
-                  SizedBox(
-                    width: context.isMobile ? 210 : 300,
-                    child: TextField(
-                      autofocus: true,
-                      onChanged: viewModel.setSearchQuery,
-                      decoration: InputDecoration(
-                        hintText: 'Search theatres or shows',
-                        prefixIcon: const Icon(Icons.search),
-                        suffixIcon: state.searchQuery.isEmpty
-                            ? null
-                            : IconButton(
-                                tooltip: 'Clear search',
-                                onPressed: () => viewModel.setSearchQuery(''),
-                                icon: const Icon(Icons.close),
-                              ),
-                        isDense: true,
+                  Flexible(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 300),
+                      child: TextField(
+                        autofocus: true,
+                        onChanged: viewModel.setSearchQuery,
+                        decoration: InputDecoration(
+                          hintText: 'Search theatres or shows',
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: state.searchQuery.isEmpty
+                              ? null
+                              : IconButton(
+                                  tooltip: 'Clear search',
+                                  onPressed: () => viewModel.setSearchQuery(''),
+                                  icon: const Icon(Icons.close),
+                                ),
+                          isDense: true,
+                        ),
                       ),
                     ),
                   ),
                 IconButton(
                   tooltip: state.searching ? 'Close search' : 'Search cinemas',
                   onPressed: () => viewModel.setSearching(!state.searching),
-                  icon: Icon(state.searching ? Icons.close : Icons.search, size: 28),
+                  icon: Icon(
+                    state.searching ? Icons.close : Icons.search,
+                    size: 28,
+                  ),
                 ),
                 IconButton(
                   tooltip: 'Showtime filters',
@@ -129,7 +142,7 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
             onSelected: viewModel.setDay,
           ),
           Container(
-            color: AppColors.surface,
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.symmetric(vertical: 14),
             child: ContentWidth(
               child: Row(
@@ -153,7 +166,7 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
           ),
           Container(
             width: double.infinity,
-            color: AppColors.surface,
+            color: Theme.of(context).colorScheme.surface,
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: ContentWidth(
               padding: EdgeInsets.zero,
@@ -161,8 +174,8 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
                 movie.description,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: AppColors.muted,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 13,
                   height: 1.35,
                 ),
@@ -172,7 +185,7 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
           const Divider(height: 1),
           Container(
             height: 72,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             alignment: Alignment.center,
             child: ContentWidth(
               child: ListView(
@@ -230,7 +243,8 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
                           isFavorite: state.favouriteCinemaIds.contains(
                             listing.cinema.id,
                           ),
-                          onFavorite: () => viewModel.toggleFavourite(listing.cinema.id),
+                          onFavorite: () =>
+                              viewModel.toggleFavourite(listing.cinema.id),
                           onShowtime: (showtime) {
                             if (showtime.soldOut) return;
                             ref
@@ -437,7 +451,7 @@ class _DateStrip extends StatelessWidget {
 
     return Container(
       height: 98,
-      color: AppColors.surface,
+      color: Theme.of(context).colorScheme.surface,
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: Breakpoints.maxContent),
@@ -461,14 +475,20 @@ class _DateStrip extends StatelessWidget {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 180),
                     width: context.isMobile ? 74 : 90,
-                    color: selected ? AppColors.primary : AppColors.surface,
+                    color: selected
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.surface,
                     padding: const EdgeInsets.symmetric(vertical: 9),
                     child: Column(
                       children: [
                         Text(
                           dateLabel.$1,
                           style: TextStyle(
-                            color: selected ? Colors.white : AppColors.muted,
+                            color: selected
+                                ? Colors.white
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                             fontSize: 12,
                           ),
                         ),
@@ -476,7 +496,9 @@ class _DateStrip extends StatelessWidget {
                         Text(
                           dateLabel.$2,
                           style: TextStyle(
-                            color: selected ? Colors.white : AppColors.ink,
+                            color: selected
+                                ? Colors.white
+                                : Theme.of(context).colorScheme.onSurface,
                             fontSize: 23,
                             fontWeight: FontWeight.w700,
                           ),
@@ -484,7 +506,11 @@ class _DateStrip extends StatelessWidget {
                         Text(
                           dateLabel.$3,
                           style: TextStyle(
-                            color: selected ? Colors.white : AppColors.muted,
+                            color: selected
+                                ? Colors.white
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                             fontSize: 12,
                           ),
                         ),
@@ -522,7 +548,7 @@ class _CinemaCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(context.isMobile ? 12 : 20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(7),
         boxShadow: const [
           BoxShadow(
@@ -549,8 +575,8 @@ class _CinemaCard extends StatelessWidget {
                   cinema.shortName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.ink,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w700,
                     fontSize: 11,
                   ),
@@ -584,7 +610,10 @@ class _CinemaCard extends StatelessWidget {
             cinema.cancellationAvailable
                 ? 'Cancellation available'
                 : 'Non-cancellable',
-            style: const TextStyle(color: AppColors.muted, fontSize: 12),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 12,
+            ),
           ),
           const SizedBox(height: 14),
           GridView.builder(
@@ -600,7 +629,7 @@ class _CinemaCard extends StatelessWidget {
             itemBuilder: (context, index) {
               final showtime = showtimes[index];
               final borderColor = showtime.soldOut
-                  ? AppColors.border
+                  ? Theme.of(context).colorScheme.outlineVariant
                   : showtime.fillingFast
                   ? AppColors.warning
                   : AppColors.success;
@@ -627,8 +656,8 @@ class _CinemaCard extends StatelessWidget {
                         showtime.time,
                         style: TextStyle(
                           color: showtime.soldOut
-                              ? AppColors.border
-                              : AppColors.muted,
+                              ? Theme.of(context).colorScheme.outlineVariant
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
                           fontSize: context.isMobile ? 12 : 13,
                         ),
                       ),
@@ -637,8 +666,10 @@ class _CinemaCard extends StatelessWidget {
                           showtime.experience,
                           style: TextStyle(
                             color: showtime.soldOut
-                                ? AppColors.border
-                                : AppColors.muted,
+                                ? Theme.of(context).colorScheme.outlineVariant
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                             fontSize: 9,
                           ),
                         ),
@@ -649,14 +680,18 @@ class _CinemaCard extends StatelessWidget {
             },
           ),
           const SizedBox(height: 14),
-          const Row(
+          Row(
             children: [
-              Icon(Icons.subtitles_outlined, size: 18, color: AppColors.muted),
+              Icon(
+                Icons.subtitles_outlined,
+                size: 18,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               SizedBox(width: 7),
               Expanded(
                 child: Text(
                   'Indicates subtitle language, if available',
-                  style: TextStyle(color: AppColors.muted, fontSize: 11),
+                  style: TextStyle(fontSize: 11),
                 ),
               ),
             ],

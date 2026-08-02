@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
 import 'models/auth_models.dart';
 import 'auth_widgets.dart';
@@ -32,9 +31,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _sendOtp() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    await ref.read(loginViewModelProvider.notifier).sendOtp(
-      _phoneController.text.trim(),
-    );
+    await ref
+        .read(loginViewModelProvider.notifier)
+        .sendOtp(_phoneController.text.trim());
   }
 
   void _setAuthMethod(bool usePhone) {
@@ -45,15 +44,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _login() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final state = ref.read(loginViewModelProvider);
-    final success = await ref.read(loginViewModelProvider.notifier).signIn(
-      AuthCredentials(
-        method: state.method,
-        email: _emailController.text.trim(),
-        phone: _phoneController.text.trim(),
-        password: _passwordController.text,
-        otp: _otpController.text.trim(),
-      ),
-    );
+    final success = await ref
+        .read(loginViewModelProvider.notifier)
+        .signIn(
+          AuthCredentials(
+            method: state.method,
+            email: _emailController.text.trim(),
+            phone: _phoneController.text.trim(),
+            password: _passwordController.text,
+            otp: _otpController.text.trim(),
+          ),
+        );
     if (success && mounted) context.go('/home');
   }
 
@@ -75,9 +76,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               style: Theme.of(context).textTheme.displaySmall,
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Sign in to pick up your next movie night.',
-              style: TextStyle(color: AppColors.muted, fontSize: 15),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 15,
+              ),
             ),
             const SizedBox(height: 28),
             AuthMethodToggle(usePhone: usePhone, onChanged: _setAuthMethod),
@@ -108,7 +112,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             if (usePhone && otpSent) ...[
               Text(
                 'We sent a 6-digit OTP to ${_phoneController.text.trim()}.',
-                style: const TextStyle(color: AppColors.muted, fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
               const SizedBox(height: 16),
               AuthTextField(
@@ -168,8 +175,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               label: const Text('Continue as guest'),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(52),
-                foregroundColor: AppColors.ink,
-                side: const BorderSide(color: AppColors.border),
+                foregroundColor: Theme.of(context).colorScheme.onSurface,
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -198,8 +207,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               label: const Text('Continue with Google'),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(52),
-                foregroundColor: AppColors.ink,
-                side: const BorderSide(color: AppColors.border),
+                foregroundColor: Theme.of(context).colorScheme.onSurface,
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

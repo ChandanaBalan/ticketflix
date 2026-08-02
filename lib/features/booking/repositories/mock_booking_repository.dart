@@ -19,8 +19,28 @@ class MockBookingRepository implements BookingRepository {
 
   static List<Seat> _createSeats() {
     const sold = {
-      'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'F4', 'F5', 'F6',
-      'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8', 'D5', 'B3', 'B4', 'B5', 'B6',
+      'G1',
+      'G2',
+      'G3',
+      'G4',
+      'G5',
+      'G6',
+      'G7',
+      'F4',
+      'F5',
+      'F6',
+      'E2',
+      'E3',
+      'E4',
+      'E5',
+      'E6',
+      'E7',
+      'E8',
+      'D5',
+      'B3',
+      'B4',
+      'B5',
+      'B6',
     };
     return [
       for (final row in const ['G', 'F', 'E', 'D', 'C', 'B', 'A'])

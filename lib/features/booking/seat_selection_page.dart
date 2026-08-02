@@ -106,140 +106,149 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
     );
 
     return selection.when(
-      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (error, _) => Scaffold(body: Center(child: Text('Unable to load seats: $error'))),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, _) =>
+          Scaffold(body: Center(child: Text('Unable to load seats: $error'))),
       data: (loaded) {
-    final movie = loaded.movie;
-    final cinema = loaded.cinema;
-    final showtime = loaded.showtime;
-    final seats = loaded.seats;
-    final bookingDate = DateTime.now().add(Duration(days: widget.dayIndex));
-    final bookingDateLabel =
-        '${_weekdays[bookingDate.weekday]}, ${bookingDate.day} ${_months[bookingDate.month - 1]}';
-    final topShowtimes = cinema.showtimes.take(3).toList();
-    final draft = ref.watch(bookingSessionProvider);
-    final total = ref.read(bookingSessionProvider.notifier).totalFor(seats);
-    final canPay = draft.selectedSeatIds.length == draft.ticketCount;
+        final movie = loaded.movie;
+        final cinema = loaded.cinema;
+        final showtime = loaded.showtime;
+        final seats = loaded.seats;
+        final bookingDate = DateTime.now().add(Duration(days: widget.dayIndex));
+        final bookingDateLabel =
+            '${_weekdays[bookingDate.weekday]}, ${bookingDate.day} ${_months[bookingDate.month - 1]}';
+        final topShowtimes = cinema.showtimes.take(3).toList();
+        final draft = ref.watch(bookingSessionProvider);
+        final total = ref.read(bookingSessionProvider.notifier).totalFor(seats);
+        final canPay = draft.selectedSeatIds.length == draft.ticketCount;
 
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Material(
-          color: AppColors.surface,
-          elevation: 10,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
-            child: TicketflixButton(
-              label: canPay
-                  ? 'Pay  ₹$total'
-                  : 'Select ${draft.ticketCount - draft.selectedSeatIds.length} more',
-              onPressed: canPay ? _showTerms : null,
+        return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          bottomNavigationBar: SafeArea(
+            top: false,
+            child: Material(
+              color: Theme.of(context).colorScheme.surface,
+              elevation: 10,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+                child: TicketflixButton(
+                  label: canPay
+                      ? 'Pay  ₹$total'
+                      : 'Select ${draft.ticketCount - draft.selectedSeatIds.length} more',
+                  onPressed: canPay ? _showTerms : null,
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-      body: Column(
-        children: [
-          DesktopHeader(onSignIn: () => context.push('/login')),
-          TicketflixPageHeader(title: movie.title, subtitle: cinema.name),
-          Expanded(
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Container(
-                    color: AppColors.surfaceTint,
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-                    child: ContentWidth(
-                      padding: EdgeInsets.zero,
-                      maxWidth: 940,
-                      child: Column(
-                        children: [
-                          Row(
+          body: Column(
+            children: [
+              DesktopHeader(onSignIn: () => context.push('/login')),
+              TicketflixPageHeader(title: movie.title, subtitle: cinema.name),
+              Expanded(
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Container(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+                        child: ContentWidth(
+                          padding: EdgeInsets.zero,
+                          maxWidth: 940,
+                          child: Column(
                             children: [
-                              Expanded(
-                                child: Text(
-                                  bookingDateLabel,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      bookingDateLabel,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  TextButton.icon(
+                                    onPressed: _askSeatCount,
+                                    icon: const Icon(
+                                      Icons.edit_outlined,
+                                      size: 18,
+                                    ),
+                                    label: Text('${draft.ticketCount} Tickets'),
+                                  ),
+                                ],
                               ),
-                              TextButton.icon(
-                                onPressed: _askSeatCount,
-                                icon: const Icon(Icons.edit_outlined, size: 18),
-                                label: Text('${draft.ticketCount} Tickets'),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  for (
+                                    var index = 0;
+                                    index < topShowtimes.length;
+                                    index++
+                                  ) ...[
+                                    if (index > 0) const SizedBox(width: 9),
+                                    Expanded(
+                                      child: _TopShowtime(
+                                        time: topShowtimes[index].time,
+                                        experience:
+                                            topShowtimes[index].experience,
+                                        selected:
+                                            topShowtimes[index].id ==
+                                            showtime.id,
+                                        fillingFast:
+                                            topShowtimes[index].fillingFast,
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              for (
-                                var index = 0;
-                                index < topShowtimes.length;
-                                index++
-                              ) ...[
-                                if (index > 0) const SizedBox(width: 9),
-                                Expanded(
-                                  child: _TopShowtime(
-                                    time: topShowtimes[index].time,
-                                    experience: topShowtimes[index].experience,
-                                    selected:
-                                        topShowtimes[index].id == showtime.id,
-                                    fillingFast:
-                                        topShowtimes[index].fillingFast,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: ContentWidth(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.isDesktop ? 24 : 10,
-                    ),
-                    maxWidth: 940,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 28),
-                        _SeatSection(
-                          title: 'Rs.880  LUXE PRIME',
-                          rows: const ['G', 'F', 'E', 'D', 'C'],
-                          seats: seats,
-                          selectedIds: draft.selectedSeatIds,
-                          onTap: _toggleSeat,
+                    SliverToBoxAdapter(
+                      child: ContentWidth(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.isDesktop ? 24 : 10,
                         ),
-                        const SizedBox(height: 24),
-                        _SeatSection(
-                          title: 'Rs.780  LUXE',
-                          rows: const ['B', 'A'],
-                          seats: seats,
-                          selectedIds: draft.selectedSeatIds,
-                          onTap: _toggleSeat,
+                        maxWidth: 940,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 28),
+                            _SeatSection(
+                              title: 'Rs.880  LUXE PRIME',
+                              rows: const ['G', 'F', 'E', 'D', 'C'],
+                              seats: seats,
+                              selectedIds: draft.selectedSeatIds,
+                              onTap: _toggleSeat,
+                            ),
+                            const SizedBox(height: 24),
+                            _SeatSection(
+                              title: 'Rs.780  LUXE',
+                              rows: const ['B', 'A'],
+                              seats: seats,
+                              selectedIds: draft.selectedSeatIds,
+                              onTap: _toggleSeat,
+                            ),
+                            const SizedBox(height: 72),
+                            const _Screen(),
+                            const SizedBox(height: 120),
+                            const _SeatLegend(),
+                            const SizedBox(height: 18),
+                            const _OfferStrip(),
+                            const SizedBox(height: 20),
+                          ],
                         ),
-                        const SizedBox(height: 72),
-                        const _Screen(),
-                        const SizedBox(height: 120),
-                        const _SeatLegend(),
-                        const SizedBox(height: 18),
-                        const _OfferStrip(),
-                        const SizedBox(height: 20),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
       },
     );
   }
@@ -258,7 +267,6 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
         );
     }
   }
-
 }
 
 class _TopShowtime extends StatelessWidget {
@@ -281,7 +289,9 @@ class _TopShowtime extends StatelessWidget {
       height: 54,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: selected ? AppColors.accent : AppColors.surface,
+        color: selected
+            ? AppColors.accent
+            : Theme.of(context).colorScheme.surface,
         border: Border.all(color: color, width: 1.5),
         borderRadius: BorderRadius.circular(3),
       ),
@@ -291,7 +301,9 @@ class _TopShowtime extends StatelessWidget {
           Text(
             time,
             style: TextStyle(
-              color: selected ? AppColors.ink : AppColors.muted,
+              color: selected
+                  ? Theme.of(context).colorScheme.onSecondary
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
               fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
               fontSize: 13,
             ),
@@ -301,8 +313,10 @@ class _TopShowtime extends StatelessWidget {
               experience,
               style: TextStyle(
                 color: selected
-                    ? AppColors.ink.withValues(alpha: .65)
-                    : AppColors.muted,
+                    ? Theme.of(
+                        context,
+                      ).colorScheme.onSecondary.withValues(alpha: .65)
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 9,
               ),
             ),
@@ -352,8 +366,8 @@ class _SeatSection extends StatelessWidget {
                   width: 24,
                   child: Text(
                     row,
-                    style: const TextStyle(
-                      color: AppColors.muted,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 11,
                     ),
                   ),
@@ -424,7 +438,7 @@ class _SeatSquare extends StatelessWidget {
                 ? const Color(0xFFE7E7E7)
                 : selected
                 ? AppColors.accent
-                : AppColors.surface,
+                : Theme.of(context).colorScheme.surface,
             border: sold
                 ? null
                 : Border.all(color: AppColors.success, width: 1.2),
@@ -434,10 +448,10 @@ class _SeatSquare extends StatelessWidget {
             '${seat.number}',
             style: TextStyle(
               color: sold
-                  ? AppColors.surface
+                  ? Theme.of(context).colorScheme.surface
                   : selected
-                  ? AppColors.ink
-                  : AppColors.muted,
+                  ? Theme.of(context).colorScheme.onSecondary
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 10,
             ),
           ),
@@ -488,12 +502,12 @@ class _SeatLegend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _LegendItem(
           label: 'Available',
-          color: AppColors.surface,
+          color: Theme.of(context).colorScheme.surface,
           outlined: true,
         ),
         SizedBox(width: 20),
@@ -543,7 +557,7 @@ class _OfferStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      color: AppColors.surfaceTint,
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
       child: const Row(
         children: [
           Icon(Icons.local_offer_outlined, color: AppColors.primary),
@@ -639,7 +653,7 @@ class _SeatCountSheetState extends State<_SeatCountSheet> {
                               style: TextStyle(
                                 color: index + 1 == count
                                     ? Colors.white
-                                    : AppColors.ink,
+                                    : Theme.of(context).colorScheme.onSurface,
                                 fontSize: 14,
                                 fontWeight: index + 1 == count
                                     ? FontWeight.w700

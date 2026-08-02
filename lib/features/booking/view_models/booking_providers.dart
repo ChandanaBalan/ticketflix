@@ -12,8 +12,8 @@ final bookingRepositoryProvider = Provider<BookingRepository>((ref) {
 
 final bookingSessionProvider =
     NotifierProvider<BookingSessionViewModel, BookingDraft>(
-  BookingSessionViewModel.new,
-);
+      BookingSessionViewModel.new,
+    );
 
 class BookingSessionViewModel extends Notifier<BookingDraft> {
   @override
@@ -95,7 +95,8 @@ class ShowtimesState {
     final normalizedSearch = searchQuery.trim().toLowerCase();
     final filtered = cinemas
         .map((listing) {
-          final cinemaMatches = normalizedSearch.isEmpty ||
+          final cinemaMatches =
+              normalizedSearch.isEmpty ||
               listing.cinema.name.toLowerCase().contains(normalizedSearch) ||
               listing.cinema.shortName.toLowerCase().contains(normalizedSearch);
           final showtimes = listing.showtimes.where((showtime) {
@@ -135,17 +136,16 @@ class ShowtimesState {
       if (period == 'PM' && hour != 12) hour += 12;
       return hour * 60 + minute;
     }
+
     int price(ShowtimeListing listing) => listing.showtimes.fold(
-          1 << 30,
-          (value, showtime) => showtime.price < value ? showtime.price : value,
-        );
-    int earliest(ShowtimeListing listing) => listing.showtimes.fold(
-          1 << 30,
-          (value, showtime) {
-            final minutes = timeInMinutes(showtime);
-            return minutes < value ? minutes : value;
-          },
-        );
+      1 << 30,
+      (value, showtime) => showtime.price < value ? showtime.price : value,
+    );
+    int earliest(ShowtimeListing listing) =>
+        listing.showtimes.fold(1 << 30, (value, showtime) {
+          final minutes = timeInMinutes(showtime);
+          return minutes < value ? minutes : value;
+        });
     filtered.sort((a, b) {
       final comparison = switch (sort) {
         ShowtimeSort.lowestPrice => price(a).compareTo(price(b)),
@@ -189,31 +189,32 @@ class ShowtimesState {
 
 final showtimesViewModelProvider =
     NotifierProvider.family<ShowtimesViewModel, ShowtimesState, String>(
-  ShowtimesViewModel.new,
-);
+      ShowtimesViewModel.new,
+    );
 
-class ShowtimesViewModel
-    extends FamilyNotifier<ShowtimesState, String> {
+class ShowtimesViewModel extends FamilyNotifier<ShowtimesState, String> {
   @override
   ShowtimesState build(String movieId) {
     final movie = ref.watch(movieRepositoryProvider).fetchMovieById(movieId);
     Future<void>(() async {
       final loadedMovie = await movie;
-      final cinemas = await ref.read(bookingRepositoryProvider).fetchCinemas(
-        ShowtimesQuery(
-          movieId: movieId,
-          dayIndex: 0,
-          language: ref.read(bookingSessionProvider).language,
-          format: ref.read(bookingSessionProvider).format,
-        ),
-      );
+      final cinemas = await ref
+          .read(bookingRepositoryProvider)
+          .fetchCinemas(
+            ShowtimesQuery(
+              movieId: movieId,
+              dayIndex: 0,
+              language: ref.read(bookingSessionProvider).language,
+              format: ref.read(bookingSessionProvider).format,
+            ),
+          );
       state = state.copyWith(
         movie: loadedMovie,
         cinemas: cinemas
-            .map((cinema) => ShowtimeListing(
-                  cinema: cinema,
-                  showtimes: cinema.showtimes,
-                ))
+            .map(
+              (cinema) =>
+                  ShowtimeListing(cinema: cinema, showtimes: cinema.showtimes),
+            )
             .toList(),
       );
     });
@@ -236,7 +237,8 @@ class ShowtimesViewModel
   void setSearching(bool value) =>
       state = state.copyWith(searching: value, searchQuery: '');
 
-  void setSearchQuery(String value) => state = state.copyWith(searchQuery: value);
+  void setSearchQuery(String value) =>
+      state = state.copyWith(searchQuery: value);
 
   void toggleFavourite(String cinemaId) {
     final next = {...state.favouriteCinemaIds};

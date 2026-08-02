@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
+import '../../core/design_system/widgets.dart';
 import '../../core/responsive/responsive.dart';
 
 class AuthShell extends StatelessWidget {
@@ -12,7 +13,7 @@ class AuthShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -22,6 +23,10 @@ class AuthShell extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const Align(
+                    alignment: Alignment.centerRight,
+                    child: ThemeToggleButton(),
+                  ),
                   if (showBack)
                     Align(
                       alignment: Alignment.centerLeft,
@@ -67,10 +72,10 @@ class _AuthBrand extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 10),
-        const Text(
+        Text(
           'ticketflix',
           style: TextStyle(
-            color: AppColors.ink,
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 25,
             fontWeight: FontWeight.w800,
             letterSpacing: -.7,
@@ -146,7 +151,9 @@ class AuthMethodToggle extends StatelessWidget {
       onSelectionChanged: (selection) => onChanged(selection.first),
       style: ButtonStyle(
         visualDensity: VisualDensity.compact,
-        side: const WidgetStatePropertyAll(BorderSide(color: AppColors.border)),
+        side: WidgetStatePropertyAll(
+          BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+        ),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),

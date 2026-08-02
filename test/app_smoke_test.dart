@@ -25,6 +25,25 @@ void main() {
     expect(find.text('Search'), findsOneWidget);
   });
 
+  testWidgets('theme toggle switches the MaterialApp theme mode', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const ProviderScope(child: TicketflixApp()));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
+      ThemeMode.light,
+    );
+    await tester.tap(find.byTooltip('Switch to dark mode'));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
+      ThemeMode.dark,
+    );
+  });
+
   testWidgets('movie cards do not overflow at the target mobile width', (
     tester,
   ) async {
@@ -73,5 +92,32 @@ void main() {
       find.text('Vanitha-Vineetha Cineplex: MG Road, Kochi'),
       findsNothing,
     );
+  });
+
+  testWidgets('showtime theater search fits on mobile', (tester) async {
+    tester.view.physicalSize = const Size(738, 1600);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: MaterialApp(home: ShowtimesPage(movieId: 'chithram')),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Search cinemas'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is TextField &&
+            widget.decoration?.hintText == 'Search theatres or shows',
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
   });
 }

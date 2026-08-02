@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
 import 'models/auth_models.dart';
 import 'auth_widgets.dart';
@@ -36,9 +35,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Future<void> _sendOtp() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    await ref.read(registerViewModelProvider.notifier).sendOtp(
-      _phoneController.text.trim(),
-    );
+    await ref
+        .read(registerViewModelProvider.notifier)
+        .sendOtp(_phoneController.text.trim());
   }
 
   void _setAuthMethod(bool usePhone) {
@@ -49,19 +48,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _register() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final state = ref.read(registerViewModelProvider);
-    final success = await ref.read(registerViewModelProvider.notifier).register(
-      RegistrationRequest(
-        name: _nameController.text.trim(),
-        credentials: AuthCredentials(
-          method: state.method,
-          email: _emailController.text.trim(),
-          phone: _phoneController.text.trim(),
-          password: _passwordController.text,
-          otp: _otpController.text.trim(),
-        ),
-        confirmPassword: _confirmController.text,
-      ),
-    );
+    final success = await ref
+        .read(registerViewModelProvider.notifier)
+        .register(
+          RegistrationRequest(
+            name: _nameController.text.trim(),
+            credentials: AuthCredentials(
+              method: state.method,
+              email: _emailController.text.trim(),
+              phone: _phoneController.text.trim(),
+              password: _passwordController.text,
+              otp: _otpController.text.trim(),
+            ),
+            confirmPassword: _confirmController.text,
+          ),
+        );
     if (success && mounted) context.go('/home');
   }
 
@@ -82,9 +83,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               style: Theme.of(context).textTheme.displaySmall,
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Save favourites, manage bookings, and never miss a premiere.',
-              style: TextStyle(color: AppColors.muted, fontSize: 15),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 15,
+              ),
             ),
             const SizedBox(height: 28),
             AuthTextField(
@@ -121,7 +125,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             if (usePhone && otpSent) ...[
               Text(
                 'We sent a 6-digit OTP to ${_phoneController.text.trim()}.',
-                style: const TextStyle(color: AppColors.muted, fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
               const SizedBox(height: 16),
               AuthTextField(

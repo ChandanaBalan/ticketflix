@@ -23,12 +23,10 @@ class MovieListState {
 
   List<Movie> get visibleMovies {
     final normalized = query.trim().toLowerCase();
-    return movies.valueOrNull
-            ?.where((movie) {
-              return normalized.isEmpty ||
-                  movie.title.toLowerCase().contains(normalized);
-            })
-            .toList() ??
+    return movies.valueOrNull?.where((movie) {
+          return normalized.isEmpty ||
+              movie.title.toLowerCase().contains(normalized);
+        }).toList() ??
         const [];
   }
 
@@ -49,8 +47,8 @@ class MovieListState {
 
 final movieListViewModelProvider =
     NotifierProvider<MovieListViewModel, MovieListState>(
-  MovieListViewModel.new,
-);
+      MovieListViewModel.new,
+    );
 
 class MovieListViewModel extends Notifier<MovieListState> {
   static const filters = [
@@ -87,7 +85,7 @@ class MovieListViewModel extends Notifier<MovieListState> {
   }
 }
 
-final movieDetailViewModelProvider =
-    FutureProvider.autoDispose.family<Movie?, String>((ref, movieId) {
-  return ref.read(movieRepositoryProvider).fetchMovieById(movieId);
-});
+final movieDetailViewModelProvider = FutureProvider.autoDispose
+    .family<Movie?, String>((ref, movieId) {
+      return ref.read(movieRepositoryProvider).fetchMovieById(movieId);
+    });

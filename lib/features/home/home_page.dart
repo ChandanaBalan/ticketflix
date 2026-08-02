@@ -50,9 +50,9 @@ class HomePage extends ConsumerWidget {
               Text(
                 description,
                 textAlign: TextAlign.center,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: AppColors.muted),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 20),
               TicketflixButton(
@@ -75,201 +75,227 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final moviesState = ref.watch(homeViewModelProvider);
     return moviesState.when(
-      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (error, _) => Scaffold(body: Center(child: Text('Unable to load movies: $error'))),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, _) =>
+          Scaffold(body: Center(child: Text('Unable to load movies: $error'))),
       data: (movies) => Scaffold(
-      bottomNavigationBar: context.isDesktop
-          ? null
-          : NavigationBar(
-              height: 72,
-              selectedIndex: 0,
-              indicatorColor: AppColors.softAccent,
-              onDestinationSelected: (index) {
-                if (index == 3) {
-                  context.push('/movies');
-                } else if (index == 1) {
-                  _showFeaturePreview(
-                    context,
-                    title: 'Prebooking',
-                    description:
-                        'Get early access to popular releases and reserve your seats before regular bookings open.',
-                    actionLabel: 'Join prebooking list',
-                  );
-                } else if (index == 2) {
-                  _showFeaturePreview(
-                    context,
-                    title: 'Affiliate & Refer',
-                    description:
-                        'Share movies with friends, track referrals, and unlock Ticketflix rewards in one place.',
-                    actionLabel: 'Create referral link',
-                  );
-                } else if (index != 0) {
-                  _comingSoon(
-                    context,
-                    const [
-                      'Home',
-                      'Prebooking',
-                      'Refer & Earn',
-                      'Search',
-                    ][index],
-                  );
-                }
-              },
-              destinations: const [
-                NavigationDestination(
-                  icon: Icon(Icons.local_activity_outlined),
-                  selectedIcon: Icon(
-                    Icons.local_activity,
-                    color: AppColors.primary,
+        bottomNavigationBar: context.isDesktop
+            ? null
+            : NavigationBar(
+                height: 72,
+                selectedIndex: 0,
+                indicatorColor: Theme.of(
+                  context,
+                ).colorScheme.secondaryContainer,
+                onDestinationSelected: (index) {
+                  if (index == 3) {
+                    context.push('/movies');
+                  } else if (index == 1) {
+                    _showFeaturePreview(
+                      context,
+                      title: 'Prebooking',
+                      description:
+                          'Get early access to popular releases and reserve your seats before regular bookings open.',
+                      actionLabel: 'Join prebooking list',
+                    );
+                  } else if (index == 2) {
+                    _showFeaturePreview(
+                      context,
+                      title: 'Affiliate & Refer',
+                      description:
+                          'Share movies with friends, track referrals, and unlock Ticketflix rewards in one place.',
+                      actionLabel: 'Create referral link',
+                    );
+                  } else if (index != 0) {
+                    _comingSoon(
+                      context,
+                      const [
+                        'Home',
+                        'Prebooking',
+                        'Refer & Earn',
+                        'Search',
+                      ][index],
+                    );
+                  }
+                },
+                destinations: const [
+                  NavigationDestination(
+                    icon: Icon(Icons.local_activity_outlined),
+                    selectedIcon: Icon(
+                      Icons.local_activity,
+                      color: AppColors.primary,
+                    ),
+                    label: 'Home',
                   ),
-                  label: 'Home',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.card_membership_outlined),
-                  selectedIcon: Icon(Icons.event_available_rounded),
-                  label: 'Prebooking',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.handshake_outlined),
-                  selectedIcon: Icon(Icons.handshake),
-                  label: 'Refer & Earn',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.search),
-                  label: 'Search',
-                ),
-              ],
-            ),
-      body: Column(
-        children: [
-          DesktopHeader(onSignIn: () => context.push('/login')),
-          Expanded(
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: ContentWidth(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.isDesktop ? 24 : 16,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 36),
-                        _WelcomeHeader(
-                          onProfileTap: () => context.push('/login'),
-                        ),
-                        const SizedBox(height: 12),
-                      ],
-                    ),
+                  NavigationDestination(
+                    icon: Icon(Icons.card_membership_outlined),
+                    selectedIcon: Icon(Icons.event_available_rounded),
+                    label: 'Prebooking',
                   ),
-                ),
-                const SliverToBoxAdapter(child: _LocationBanner()),
-                SliverToBoxAdapter(
-                  child: ContentWidth(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.isDesktop ? 24 : 16,
-                    ),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        _CategoryRail(
-                          onTap: (label) {
-                            if (label == 'Movies') {
-                              context.push('/movies');
-                            } else {
-                              _comingSoon(context, label);
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 22),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0),
-                          child: _PromoCarousel(
-                            imageUrl:
-                                movies.first.bannerUrl ??
-                                movies.first.posterUrl,
+                  NavigationDestination(
+                    icon: Icon(Icons.handshake_outlined),
+                    selectedIcon: Icon(Icons.handshake),
+                    label: 'Refer & Earn',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.search),
+                    label: 'Search',
+                  ),
+                ],
+              ),
+        body: Column(
+          children: [
+            DesktopHeader(onSignIn: () => context.push('/login')),
+            Expanded(
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: ContentWidth(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.isDesktop ? 24 : 16,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 36),
+                          _WelcomeHeader(
+                            onProfileTap: () => context.push('/login'),
                           ),
-                        ),
-                        const SizedBox(height: 14),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: SizedBox(
-                              width: double.infinity,
-                              height: context.isDesktop ? 156 : 68,
-                              child: Stack(
-                                fit: StackFit.expand,
-                                children: [
-                                  TicketflixRemoteImage(
-                                    url:
-                                        movies[1].bannerUrl ??
-                                        movies[1].posterUrl,
-                                  ),
-                                  DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          AppColors.midnight.withValues(
-                                            alpha: .9,
-                                          ),
-                                          Colors.transparent,
-                                        ],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ),
+                          const SizedBox(height: 12),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SliverToBoxAdapter(child: _LocationBanner()),
+                  SliverToBoxAdapter(
+                    child: ContentWidth(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.isDesktop ? 24 : 16,
+                      ),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          _CategoryRail(
+                            onTap: (label) {
+                              if (label == 'Movies') {
+                                context.push('/movies');
+                              } else {
+                                _comingSoon(context, label);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 22),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 0),
+                            child: _PromoCarousel(
+                              imageUrl:
+                                  movies.first.bannerUrl ??
+                                  movies.first.posterUrl,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: context.isDesktop ? 156 : 68,
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    TicketflixRemoteImage(
+                                      url:
+                                          movies[1].bannerUrl ??
+                                          movies[1].posterUrl,
                                     ),
-                                  ),
-                                  const Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                      ),
-                                      child: Text(
-                                        'CLASSIC SCREENINGS  •  FROM ₹149',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: .4,
+                                    DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            AppColors.midnight.withValues(
+                                              alpha: .9,
+                                            ),
+                                            Colors.transparent,
+                                          ],
+                                          begin: Alignment.centerLeft,
+                                          end: Alignment.centerRight,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    const Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                        ),
+                                        child: Text(
+                                          'CLASSIC SCREENINGS  •  FROM ₹149',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: .4,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 26),
-                        _SectionTitle(
-                          title: 'Recommended Movies',
-                          onSeeAll: () => context.push('/movies'),
-                        ),
-                        const SizedBox(height: 14),
-                      ],
+                          const SizedBox(height: 26),
+                          _SectionTitle(
+                            title: 'Recommended Movies',
+                            onSeeAll: () => context.push('/movies'),
+                          ),
+                          const SizedBox(height: 14),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                if (context.isDesktop)
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 52),
-                    sliver: SliverToBoxAdapter(
-                      child: ContentWidth(
-                        padding: EdgeInsets.zero,
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 4,
-                                crossAxisSpacing: 22,
-                                mainAxisSpacing: 22,
-                                childAspectRatio: .58,
-                              ),
+                  if (context.isDesktop)
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 52),
+                      sliver: SliverToBoxAdapter(
+                        child: ContentWidth(
+                          padding: EdgeInsets.zero,
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 4,
+                                  crossAxisSpacing: 22,
+                                  mainAxisSpacing: 22,
+                                  childAspectRatio: .58,
+                                ),
+                            itemCount: movies.length,
+                            itemBuilder: (context, index) => MoviePosterCard(
+                              width: double.infinity,
+                              title: movies[index].title,
+                              posterUrl: movies[index].posterUrl,
+                              likes: movies[index].likes,
+                              genres: movies[index].genres,
+                              onTap: () =>
+                                  context.push('/movies/${movies[index].id}'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 310,
+                        child: ListView.separated(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          scrollDirection: Axis.horizontal,
                           itemCount: movies.length,
+                          separatorBuilder: (_, _) => const SizedBox(width: 12),
                           itemBuilder: (context, index) => MoviePosterCard(
-                            width: double.infinity,
+                            width: 145,
                             title: movies[index].title,
                             posterUrl: movies[index].posterUrl,
                             likes: movies[index].likes,
@@ -280,33 +306,11 @@ class HomePage extends ConsumerWidget {
                         ),
                       ),
                     ),
-                  )
-                else
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: 310,
-                      child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: movies.length,
-                        separatorBuilder: (_, _) => const SizedBox(width: 12),
-                        itemBuilder: (context, index) => MoviePosterCard(
-                          width: 145,
-                          title: movies[index].title,
-                          posterUrl: movies[index].posterUrl,
-                          likes: movies[index].likes,
-                          genres: movies[index].genres,
-                          onTap: () =>
-                              context.push('/movies/${movies[index].id}'),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
@@ -352,13 +356,15 @@ class _WelcomeHeader extends StatelessWidget {
             ],
           ),
         ),
+        const ThemeToggleButton(),
+        const SizedBox(width: 4),
         IconButton.outlined(
           tooltip: 'Profile',
           onPressed: onProfileTap,
           icon: const Icon(Icons.person_outline, size: 27),
           style: IconButton.styleFrom(
             minimumSize: const Size(56, 56),
-            side: const BorderSide(color: AppColors.muted),
+            side: BorderSide(color: Theme.of(context).colorScheme.outline),
           ),
         ),
       ],
@@ -437,10 +443,14 @@ class _CategoryRail extends StatelessWidget {
                     height: 54,
                     decoration: BoxDecoration(
                       color: item.$2 == 'Movies'
-                          ? AppColors.softAccent
-                          : AppColors.surfaceTint,
+                          ? Theme.of(context).colorScheme.secondaryContainer
+                          : Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.border),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
                     ),
                     alignment: Alignment.center,
                     child: Icon(item.$1, color: AppColors.primary, size: 27),
@@ -520,7 +530,9 @@ class _PromoCarouselState extends State<_PromoCarousel> {
               height: 7,
               margin: const EdgeInsets.symmetric(horizontal: 3),
               decoration: BoxDecoration(
-                color: index == page ? AppColors.primary : AppColors.border,
+                color: index == page
+                    ? AppColors.primary
+                    : Theme.of(context).colorScheme.outlineVariant,
                 borderRadius: BorderRadius.circular(9),
               ),
             ),

@@ -41,8 +41,9 @@ class AuthFormState {
   }
 }
 
-final loginViewModelProvider =
-    NotifierProvider<LoginViewModel, AuthFormState>(LoginViewModel.new);
+final loginViewModelProvider = NotifierProvider<LoginViewModel, AuthFormState>(
+  LoginViewModel.new,
+);
 
 class LoginViewModel extends Notifier<AuthFormState> {
   @override
@@ -125,8 +126,10 @@ class RegisterViewModel extends Notifier<AuthFormState> {
   }
 }
 
-final forgotPasswordViewModelProvider = NotifierProvider.autoDispose<
-    ForgotPasswordViewModel, AuthFormState>(ForgotPasswordViewModel.new);
+final forgotPasswordViewModelProvider =
+    NotifierProvider.autoDispose<ForgotPasswordViewModel, AuthFormState>(
+      ForgotPasswordViewModel.new,
+    );
 
 class ForgotPasswordViewModel extends AutoDisposeNotifier<AuthFormState> {
   @override

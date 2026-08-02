@@ -11,7 +11,8 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
 }
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
@@ -25,9 +26,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   Future<void> _sendResetLink() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    await ref.read(forgotPasswordViewModelProvider.notifier).sendResetLink(
-      _emailController.text.trim(),
-    );
+    await ref
+        .read(forgotPasswordViewModelProvider.notifier)
+        .sendResetLink(_emailController.text.trim());
   }
 
   @override
@@ -46,9 +47,12 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Enter your email and we’ll send you a secure reset link.',
-                    style: TextStyle(color: AppColors.muted, fontSize: 15),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 15,
+                    ),
                   ),
                   const SizedBox(height: 28),
                   AuthTextField(
@@ -90,8 +94,8 @@ class _ResetLinkSent extends StatelessWidget {
         Container(
           width: 72,
           height: 72,
-          decoration: const BoxDecoration(
-            color: AppColors.softAccent,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondaryContainer,
             shape: BoxShape.circle,
           ),
           child: const Icon(
@@ -108,8 +112,8 @@ class _ResetLinkSent extends StatelessWidget {
         const SizedBox(height: 10),
         Text(
           'If an account exists for $email, we’ve sent instructions to reset your password.',
-          style: const TextStyle(
-            color: AppColors.muted,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: 15,
             height: 1.4,
           ),

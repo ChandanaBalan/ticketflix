@@ -1,8 +1,34 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../app/theme_mode.dart';
 import '../theme/app_colors.dart';
 import '../../core/responsive/responsive.dart';
+
+class ThemeToggleButton extends StatelessWidget {
+  const ThemeToggleButton({this.compact = false, super.key});
+
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = ThemeModeScope.maybeOf(context);
+    final isDark =
+        controller?.isDark ?? Theme.of(context).brightness == Brightness.dark;
+    return IconButton(
+      tooltip: isDark ? 'Switch to light mode' : 'Switch to dark mode',
+      onPressed: controller?.toggle,
+      icon: Icon(
+        isDark ? Icons.light_mode_rounded : Icons.dark_mode_outlined,
+        size: compact ? 21 : 24,
+      ),
+      style: IconButton.styleFrom(
+        foregroundColor: compact ? Colors.white : null,
+        side: compact ? const BorderSide(color: Colors.white38) : null,
+      ),
+    );
+  }
+}
 
 class TicketflixButton extends StatelessWidget {
   const TicketflixButton({
@@ -29,8 +55,10 @@ class TicketflixButton extends StatelessWidget {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: AppColors.border,
-          disabledForegroundColor: AppColors.muted,
+          disabledBackgroundColor: Theme.of(context).colorScheme.outlineVariant,
+          disabledForegroundColor: Theme.of(
+            context,
+          ).colorScheme.onSurfaceVariant,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
@@ -56,7 +84,7 @@ class TicketflixPageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
+      color: Theme.of(context).colorScheme.surface,
       child: SafeArea(
         bottom: false,
         child: ContentWidth(
@@ -84,29 +112,35 @@ class TicketflixPageHeader extends StatelessWidget {
                   )
                 else
                   const SizedBox(width: 4),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      if (subtitle != null)
+                if (title.isNotEmpty)
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          subtitle!,
+                          title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: AppColors.muted),
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
-                    ],
+                        if (subtitle != null)
+                          Text(
+                            subtitle!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
                 ...actions,
+                if (!context.isDesktop) const ThemeToggleButton(compact: true),
               ],
             ),
           ),
@@ -160,6 +194,8 @@ class DesktopHeader extends StatelessWidget {
                 ),
               ),
               const Spacer(),
+              const ThemeToggleButton(compact: true),
+              const SizedBox(width: 4),
               TextButton.icon(
                 onPressed: () {},
                 icon: const Icon(Icons.location_on_outlined),
@@ -348,7 +384,7 @@ Future<T?> showTicketflixSheet<T>({
     isScrollControlled: true,
     isDismissible: isDismissible,
     useSafeArea: true,
-    backgroundColor: AppColors.surface,
+    backgroundColor: Theme.of(context).colorScheme.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
     ),
@@ -367,7 +403,7 @@ class SheetHandle extends StatelessWidget {
         height: 5,
         margin: const EdgeInsets.only(top: 12, bottom: 18),
         decoration: BoxDecoration(
-          color: AppColors.border,
+          color: Theme.of(context).colorScheme.outlineVariant,
           borderRadius: BorderRadius.circular(99),
         ),
       ),

@@ -29,7 +29,9 @@ class MovieListPage extends ConsumerWidget {
           ? FloatingActionButton.extended(
               heroTag: 'cinema-browse',
               onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Cinema discovery is coming soon.')),
+                const SnackBar(
+                  content: Text('Cinema discovery is coming soon.'),
+                ),
               ),
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
@@ -61,7 +63,10 @@ class MovieListPage extends ConsumerWidget {
               IconButton(
                 tooltip: state.searching ? 'Close search' : 'Search',
                 onPressed: viewModel.toggleSearch,
-                icon: Icon(state.searching ? Icons.close : Icons.search, size: 30),
+                icon: Icon(
+                  state.searching ? Icons.close : Icons.search,
+                  size: 30,
+                ),
               ),
             ],
           ),
@@ -69,7 +74,8 @@ class MovieListPage extends ConsumerWidget {
           Expanded(
             child: state.movies.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text('Unable to load movies: $error')),
+              error: (error, _) =>
+                  Center(child: Text('Unable to load movies: $error')),
               data: (_) => CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
@@ -85,24 +91,31 @@ class MovieListPage extends ConsumerWidget {
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: MovieListViewModel.filters.length + 1,
-                              separatorBuilder: (_, _) => const SizedBox(width: 10),
+                              separatorBuilder: (_, _) =>
+                                  const SizedBox(width: 10),
                               itemBuilder: (context, index) {
                                 if (index == 0) {
                                   return IconButton.outlined(
                                     tooltip: 'Filters',
                                     onPressed: () {},
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.filter_alt_outlined,
-                                      color: AppColors.primary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                     ),
                                   );
                                 }
-                                final filter = MovieListViewModel.filters[index - 1];
+                                final filter =
+                                    MovieListViewModel.filters[index - 1];
                                 return ChoiceChip(
                                   label: Text(filter),
                                   selected: state.selectedFilter == filter,
-                                  selectedColor: AppColors.softAccent,
-                                  onSelected: (_) => viewModel.selectFilter(filter),
+                                  selectedColor: Theme.of(
+                                    context,
+                                  ).colorScheme.secondaryContainer,
+                                  onSelected: (_) =>
+                                      viewModel.selectFilter(filter),
                                 );
                               },
                             ),
@@ -119,10 +132,26 @@ class MovieListPage extends ConsumerWidget {
                             ),
                             child: const Row(
                               children: [
-                                Text('Coming Soon', style: TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w700)),
+                                Text(
+                                  'Coming Soon',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                                 SizedBox(width: 6),
-                                Expanded(child: Text('Explore Upcoming Movies', style: TextStyle(color: Colors.white70))),
-                                Icon(Icons.chevron_right, color: Colors.white, size: 30),
+                                Expanded(
+                                  child: Text(
+                                    'Explore Upcoming Movies',
+                                    style: TextStyle(color: Colors.white70),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
                               ],
                             ),
                           ),
@@ -132,7 +161,9 @@ class MovieListPage extends ConsumerWidget {
                     ),
                   ),
                   if (movies.isEmpty)
-                    const SliverFillRemaining(child: Center(child: Text('No movies found')))
+                    const SliverFillRemaining(
+                      child: Center(child: Text('No movies found')),
+                    )
                   else
                     SliverPadding(
                       padding: EdgeInsets.fromLTRB(
@@ -147,12 +178,15 @@ class MovieListPage extends ConsumerWidget {
                           child: GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: columns,
-                              crossAxisSpacing: context.isMobile ? 16 : 22,
-                              mainAxisSpacing: 24,
-                              childAspectRatio: context.isMobile ? .46 : .50,
-                            ),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: columns,
+                                  crossAxisSpacing: context.isMobile ? 16 : 22,
+                                  mainAxisSpacing: 24,
+                                  childAspectRatio: context.isMobile
+                                      ? .46
+                                      : .50,
+                                ),
                             itemCount: movies.length,
                             itemBuilder: (context, index) => MoviePosterCard(
                               width: double.infinity,
@@ -161,7 +195,8 @@ class MovieListPage extends ConsumerWidget {
                               likes: movies[index].likes,
                               genres: movies[index].genres,
                               showLikes: true,
-                              onTap: () => context.push('/movies/${movies[index].id}'),
+                              onTap: () =>
+                                  context.push('/movies/${movies[index].id}'),
                             ),
                           ),
                         ),

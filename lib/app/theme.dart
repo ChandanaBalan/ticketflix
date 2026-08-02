@@ -3,61 +3,69 @@ import '../core/theme/app_colors.dart';
 
 export '../core/theme/app_colors.dart';
 
-ThemeData buildTicketflixTheme() {
+ThemeData buildTicketflixTheme({Brightness brightness = Brightness.light}) {
+  final isDark = brightness == Brightness.dark;
+  final surface = isDark ? const Color(0xFF17152E) : AppColors.surface;
+  final surfaceTint = isDark ? const Color(0xFF24203A) : AppColors.surfaceTint;
+  final ink = isDark ? const Color(0xFFF1EDFF) : AppColors.ink;
+  final border = isDark ? const Color(0xFF40385A) : AppColors.border;
+  final softAccent = isDark ? const Color(0xFF2D2550) : AppColors.softAccent;
+
   final scheme = ColorScheme.fromSeed(
     seedColor: AppColors.primary,
     primary: AppColors.primary,
     onPrimary: Colors.white,
     secondary: AppColors.accent,
-    onSecondary: AppColors.ink,
+    onSecondary: const Color(0xFF17302B),
     tertiary: AppColors.locationBlue,
-    surface: AppColors.surface,
-    onSurface: AppColors.ink,
-    brightness: Brightness.light,
+    surface: surface,
+    onSurface: ink,
+    brightness: brightness,
   );
 
   return ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
-    scaffoldBackgroundColor: AppColors.surface,
+    brightness: brightness,
+    scaffoldBackgroundColor: surface,
     fontFamily: 'Roboto',
-    textTheme: const TextTheme(
+    textTheme: TextTheme(
       displaySmall: TextStyle(
-        color: AppColors.ink,
+        color: ink,
         fontSize: 30,
         fontWeight: FontWeight.w700,
         height: 1.1,
       ),
       headlineSmall: TextStyle(
-        color: AppColors.ink,
+        color: ink,
         fontSize: 22,
         fontWeight: FontWeight.w700,
       ),
       titleLarge: TextStyle(
-        color: AppColors.ink,
+        color: ink,
         fontSize: 20,
         fontWeight: FontWeight.w700,
       ),
       titleMedium: TextStyle(
-        color: AppColors.ink,
+        color: ink,
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
-      bodyLarge: TextStyle(color: AppColors.ink, fontSize: 16, height: 1.35),
-      bodyMedium: TextStyle(color: AppColors.ink, fontSize: 14, height: 1.35),
-      bodySmall: TextStyle(color: AppColors.muted, fontSize: 12, height: 1.35),
+      bodyLarge: TextStyle(fontSize: 16, height: 1.35),
+      bodyMedium: TextStyle(fontSize: 14, height: 1.35),
+      bodySmall: TextStyle(fontSize: 12, height: 1.35),
     ),
     chipTheme: ChipThemeData(
-      backgroundColor: AppColors.surface,
-      side: const BorderSide(color: AppColors.border),
+      backgroundColor: surface,
+      side: BorderSide(color: border),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-      labelStyle: const TextStyle(color: AppColors.ink),
+      labelStyle: TextStyle(color: ink),
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      selectedColor: AppColors.softAccent,
+      selectedColor: softAccent,
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: AppColors.surfaceTint,
+      fillColor: surfaceTint,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
@@ -68,21 +76,21 @@ ThemeData buildTicketflixTheme() {
       ),
     ),
     cardTheme: CardThemeData(
-      color: AppColors.surface,
+      color: surface,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
-    dividerTheme: const DividerThemeData(color: AppColors.border),
+    dividerTheme: DividerThemeData(color: border),
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: AppColors.surface,
-      indicatorColor: AppColors.softAccent,
+      backgroundColor: surface,
+      indicatorColor: softAccent,
       labelTextStyle: const WidgetStatePropertyAll(
         TextStyle(fontWeight: FontWeight.w600),
       ),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: AppColors.ink,
+      backgroundColor: AppColors.midnight,
       foregroundColor: AppColors.accent,
     ),
     pageTransitionsTheme: const PageTransitionsTheme(

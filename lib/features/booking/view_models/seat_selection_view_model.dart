@@ -45,42 +45,44 @@ class SeatSelectionState {
   final List<Seat> seats;
 }
 
-final seatSelectionViewModelProvider =
-    FutureProvider.autoDispose.family<SeatSelectionState, SeatSelectionArgs>(
-  (ref, args) async {
-    final movie = await ref.read(movieRepositoryProvider).fetchMovieById(
-      args.movieId,
-    );
-    final cinemas = await ref.read(bookingRepositoryProvider).fetchCinemas(
-      ShowtimesQuery(
-        movieId: args.movieId,
-        dayIndex: args.dayIndex,
-        language: ref.read(bookingSessionProvider).language,
-        format: ref.read(bookingSessionProvider).format,
-      ),
-    );
-    final selectedMovie = movie ?? (throw StateError('Movie not found'));
-    final cinema = cinemas.firstWhere(
-      (value) => value.id == args.cinemaId,
-      orElse: () => cinemas.first,
-    );
-    final showtime = cinema.showtimes.firstWhere(
-      (value) => value.id == args.showId,
-      orElse: () => cinema.showtimes.first,
-    );
-    final seats = await ref.read(bookingRepositoryProvider).fetchSeats(
-      SeatMapQuery(
-        movieId: args.movieId,
-        cinemaId: cinema.id,
-        showtimeId: showtime.id,
-        dayIndex: args.dayIndex,
-      ),
-    );
-    return SeatSelectionState(
-      movie: selectedMovie,
-      cinema: cinema,
-      showtime: showtime,
-      seats: seats,
-    );
-  },
-);
+final seatSelectionViewModelProvider = FutureProvider.autoDispose
+    .family<SeatSelectionState, SeatSelectionArgs>((ref, args) async {
+      final movie = await ref
+          .read(movieRepositoryProvider)
+          .fetchMovieById(args.movieId);
+      final cinemas = await ref
+          .read(bookingRepositoryProvider)
+          .fetchCinemas(
+            ShowtimesQuery(
+              movieId: args.movieId,
+              dayIndex: args.dayIndex,
+              language: ref.read(bookingSessionProvider).language,
+              format: ref.read(bookingSessionProvider).format,
+            ),
+          );
+      final selectedMovie = movie ?? (throw StateError('Movie not found'));
+      final cinema = cinemas.firstWhere(
+        (value) => value.id == args.cinemaId,
+        orElse: () => cinemas.first,
+      );
+      final showtime = cinema.showtimes.firstWhere(
+        (value) => value.id == args.showId,
+        orElse: () => cinema.showtimes.first,
+      );
+      final seats = await ref
+          .read(bookingRepositoryProvider)
+          .fetchSeats(
+            SeatMapQuery(
+              movieId: args.movieId,
+              cinemaId: cinema.id,
+              showtimeId: showtime.id,
+              dayIndex: args.dayIndex,
+            ),
+          );
+      return SeatSelectionState(
+        movie: selectedMovie,
+        cinema: cinema,
+        showtime: showtime,
+        seats: seats,
+      );
+    });

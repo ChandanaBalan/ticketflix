@@ -30,9 +30,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       end: 1,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
     ref.listenManual(splashViewModelProvider, (_, next) {
-      next.whenOrNull(data: (_) {
-        if (mounted) context.go('/login');
-      });
+      next.whenOrNull(
+        data: (_) {
+          if (mounted) context.go('/login');
+        },
+      );
     });
   }
 
