@@ -11,11 +11,15 @@ class SeatSelectionPage extends ConsumerStatefulWidget {
   const SeatSelectionPage({
     required this.movieId,
     required this.showId,
+    required this.cinemaId,
+    required this.dayIndex,
     super.key,
   });
 
   final String movieId;
   final String showId;
+  final String cinemaId;
+  final int dayIndex;
 
   @override
   ConsumerState<SeatSelectionPage> createState() => _SeatSelectionPageState();
@@ -25,6 +29,30 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
   var promptedForCount = false;
 
   static final seats = _createSeats();
+  static const _weekdays = [
+    '',
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun',
+  ];
+  static const _months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
 
   @override
   void initState() {
@@ -67,6 +95,18 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
   Widget build(BuildContext context) {
     final repository = ref.watch(mockRepositoryProvider);
     final movie = repository.movie(widget.movieId);
+    final cinema = repository.cinemas.firstWhere(
+      (cinema) => cinema.id == widget.cinemaId,
+      orElse: () => repository.cinemas.first,
+    );
+    final showtime = cinema.showtimes.firstWhere(
+      (showtime) => showtime.id == widget.showId,
+      orElse: () => cinema.showtimes.first,
+    );
+    final bookingDate = DateTime.now().add(Duration(days: widget.dayIndex));
+    final bookingDateLabel =
+        '${_weekdays[bookingDate.weekday]}, ${bookingDate.day} ${_months[bookingDate.month - 1]}';
+    final topShowtimes = cinema.showtimes.take(3).toList();
     final draft = ref.watch(bookingProvider);
     final total = ref.read(bookingProvider.notifier).totalFor(seats);
     final canPay = draft.selectedSeatIds.length == draft.ticketCount;
@@ -92,10 +132,7 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
       body: Column(
         children: [
           const DesktopHeader(),
-          TicketflixPageHeader(
-            title: movie.title,
-            subtitle: 'PVR: Forum Mall, Kochi',
-          ),
+          TicketflixPageHeader(title: movie.title, subtitle: cinema.name),
           Expanded(
             child: CustomScrollView(
               slivers: [
@@ -110,10 +147,12 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
                         children: [
                           Row(
                             children: [
-                              const Expanded(
+                              Expanded(
                                 child: Text(
-                                  'Thu, 30 Jul',
-                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                  bookingDateLabel,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                               TextButton.icon(
@@ -124,30 +163,25 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          const Row(
+                          Row(
                             children: [
-                              Expanded(
-                                child: _TopShowtime(
-                                  time: '06:50 AM',
-                                  experience: '',
+                              for (
+                                var index = 0;
+                                index < topShowtimes.length;
+                                index++
+                              ) ...[
+                                if (index > 0) const SizedBox(width: 9),
+                                Expanded(
+                                  child: _TopShowtime(
+                                    time: topShowtimes[index].time,
+                                    experience: topShowtimes[index].experience,
+                                    selected:
+                                        topShowtimes[index].id == showtime.id,
+                                    fillingFast:
+                                        topShowtimes[index].fillingFast,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 9),
-                              Expanded(
-                                child: _TopShowtime(
-                                  time: '07:00 AM',
-                                  experience: 'LUXE',
-                                  selected: true,
-                                ),
-                              ),
-                              SizedBox(width: 9),
-                              Expanded(
-                                child: _TopShowtime(
-                                  time: '07:30 AM',
-                                  experience: 'PXL',
-                                  fillingFast: true,
-                                ),
-                              ),
+                              ],
                             ],
                           ),
                         ],

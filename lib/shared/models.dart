@@ -78,12 +78,14 @@ class Showtime {
 class Cinema {
   const Cinema({
     required this.id,
+    required this.shortName,
     required this.name,
     required this.showtimes,
     this.cancellationAvailable = true,
   });
 
   final String id;
+  final String shortName;
   final String name;
   final List<Showtime> showtimes;
   final bool cancellationAvailable;

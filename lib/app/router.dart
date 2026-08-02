@@ -47,6 +47,9 @@ final ticketflixRouter = GoRouter(
                     state.pathParameters['movieId'] ??
                     'spider-man-brand-new-day',
                 showId: state.pathParameters['showId'] ?? '07-00',
+                cinemaId: state.uri.queryParameters['cinemaId'] ?? 'pvr-forum',
+                dayIndex:
+                    int.tryParse(state.uri.queryParameters['day'] ?? '') ?? 0,
               ),
             ),
           ],

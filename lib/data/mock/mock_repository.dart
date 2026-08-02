@@ -138,6 +138,7 @@ class MockRepository {
   List<Cinema> get cinemas => const [
     Cinema(
       id: 'pvr-forum',
+      shortName: 'PVR',
       name: 'PVR: Forum Mall, Kochi',
       showtimes: [
         Showtime(
@@ -240,6 +241,122 @@ class MockRepository {
           experience: 'PXL',
           price: 650,
           fillingFast: true,
+        ),
+      ],
+    ),
+    Cinema(
+      id: 'inox-lulu',
+      shortName: 'INOX',
+      name: 'INOX: Lulu Mall, Edappally',
+      showtimes: [
+        Showtime(
+          id: 'inox-09-10',
+          time: '09:10 AM',
+          experience: '2D',
+          price: 240,
+        ),
+        Showtime(
+          id: 'inox-11-40',
+          time: '11:40 AM',
+          experience: '3D',
+          price: 340,
+        ),
+        Showtime(
+          id: 'inox-02-20',
+          time: '02:20 PM',
+          experience: '2D',
+          price: 260,
+        ),
+        Showtime(
+          id: 'inox-05-05',
+          time: '05:05 PM',
+          experience: '3D',
+          price: 340,
+          fillingFast: true,
+        ),
+        Showtime(
+          id: 'inox-08-15',
+          time: '08:15 PM',
+          experience: '2D',
+          price: 280,
+        ),
+      ],
+    ),
+    Cinema(
+      id: 'cinepolis-centre-square',
+      shortName: 'CINEPOLIS',
+      name: 'Cinepolis: Centre Square Mall, Kochi',
+      showtimes: [
+        Showtime(
+          id: 'cinepolis-10-20',
+          time: '10:20 AM',
+          experience: '2D',
+          price: 220,
+        ),
+        Showtime(
+          id: 'cinepolis-01-15',
+          time: '01:15 PM',
+          experience: '3D',
+          price: 320,
+        ),
+        Showtime(
+          id: 'cinepolis-04-30',
+          time: '04:30 PM',
+          experience: '2D',
+          price: 240,
+          fillingFast: true,
+        ),
+        Showtime(
+          id: 'cinepolis-07-45',
+          time: '07:45 PM',
+          experience: '3D',
+          price: 350,
+          soldOut: true,
+        ),
+        Showtime(
+          id: 'cinepolis-10-35',
+          time: '10:35 PM',
+          experience: '2D',
+          price: 220,
+        ),
+      ],
+    ),
+    Cinema(
+      id: 'vanitha-vineetha',
+      shortName: 'V&V',
+      name: 'Vanitha-Vineetha Cineplex: MG Road, Kochi',
+      cancellationAvailable: false,
+      showtimes: [
+        Showtime(
+          id: 'vv-09-30',
+          time: '09:30 AM',
+          experience: '2D',
+          price: 180,
+        ),
+        Showtime(
+          id: 'vv-12-45',
+          time: '12:45 PM',
+          experience: '2D',
+          price: 200,
+        ),
+        Showtime(
+          id: 'vv-03-45',
+          time: '03:45 PM',
+          experience: '2D',
+          price: 220,
+          fillingFast: true,
+        ),
+        Showtime(
+          id: 'vv-06-50',
+          time: '06:50 PM',
+          experience: '2D',
+          price: 220,
+        ),
+        Showtime(
+          id: 'vv-09-40',
+          time: '09:40 PM',
+          experience: '2D',
+          price: 200,
         ),
       ],
     ),
