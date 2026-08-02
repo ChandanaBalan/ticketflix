@@ -1,24 +1,22 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme.dart';
+import 'view_models/splash_view_model.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _fade;
   late final Animation<double> _scale;
-  Timer? _navigationTimer;
-
   @override
   void initState() {
     super.initState();
@@ -31,20 +29,22 @@ class _SplashScreenState extends State<SplashScreen>
       begin: .86,
       end: 1,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
-    _navigationTimer = Timer(const Duration(milliseconds: 1550), () {
-      if (mounted) context.go('/login');
+    ref.listenManual(splashViewModelProvider, (_, next) {
+      next.whenOrNull(data: (_) {
+        if (mounted) context.go('/login');
+      });
     });
   }
 
   @override
   void dispose() {
-    _navigationTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(splashViewModelProvider);
     return Scaffold(
       backgroundColor: AppColors.midnight,
       body: Center(

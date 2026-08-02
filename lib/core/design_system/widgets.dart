@@ -1,10 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../app/theme.dart';
+import '../theme/app_colors.dart';
 import '../../core/responsive/responsive.dart';
-import '../../shared/models.dart';
 
 class TicketflixButton extends StatelessWidget {
   const TicketflixButton({
@@ -110,7 +108,9 @@ class TicketflixPageHeader extends StatelessWidget {
 }
 
 class DesktopHeader extends StatelessWidget {
-  const DesktopHeader({super.key});
+  const DesktopHeader({this.onSignIn, super.key});
+
+  final VoidCallback? onSignIn;
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +159,7 @@ class DesktopHeader extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               OutlinedButton.icon(
-                onPressed: () => context.push('/login'),
+                onPressed: onSignIn,
                 icon: const Icon(Icons.person_outline),
                 label: const Text('Sign in'),
                 style: OutlinedButton.styleFrom(
@@ -177,14 +177,20 @@ class DesktopHeader extends StatelessWidget {
 
 class MoviePosterCard extends StatelessWidget {
   const MoviePosterCard({
-    required this.movie,
+    required this.title,
+    required this.posterUrl,
+    required this.likes,
+    this.genres = const [],
     required this.onTap,
     this.showLikes = false,
     this.width = 145,
     super.key,
   });
 
-  final Movie movie;
+  final String title;
+  final String posterUrl;
+  final String likes;
+  final List<String> genres;
   final VoidCallback onTap;
   final bool showLikes;
   final double width;
@@ -193,7 +199,7 @@ class MoviePosterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: '${movie.title}, ${movie.likes} likes',
+      label: '$title, $likes likes',
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(10),
@@ -207,7 +213,7 @@ class MoviePosterCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: TicketflixRemoteImage(
-                    url: movie.posterUrl,
+                    url: posterUrl,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -224,7 +230,7 @@ class MoviePosterCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        '${movie.likes} likes',
+                        '$likes likes',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontSize: 12),
@@ -235,14 +241,14 @@ class MoviePosterCard extends StatelessWidget {
               ],
               const SizedBox(height: 6),
               Text(
-                movie.title,
+                title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 2),
               Text(
-                movie.genres.join(' • '),
+                genres.join(' • '),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall,

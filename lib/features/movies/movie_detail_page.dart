@@ -5,8 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
 import '../../core/responsive/responsive.dart';
-import '../../shared/models.dart';
-import '../booking/booking_state.dart';
+import 'models/movie.dart';
+import '../booking/view_models/booking_providers.dart';
+import 'view_models/movie_providers.dart';
 
 class MovieDetailPage extends ConsumerWidget {
   const MovieDetailPage({required this.movieId, super.key});
@@ -24,18 +25,25 @@ class MovieDetailPage extends ConsumerWidget {
     );
     if (choice == null || !context.mounted) return;
     ref
-        .read(bookingProvider.notifier)
+        .read(bookingSessionProvider.notifier)
         .setFormat(choice.language, choice.format);
     context.push('/movies/${movie.id}/shows');
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final repository = ref.watch(mockRepositoryProvider);
-    final movie = repository.movie(movieId);
     final isDesktop = context.isDesktop;
+    final movieState = ref.watch(movieDetailViewModelProvider(movieId));
 
-    return Scaffold(
+    return movieState.when(
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, _) => Scaffold(body: Center(child: Text('Unable to load movie: $error'))),
+      data: (movie) {
+        if (movie == null) {
+          return const Scaffold(body: Center(child: Text('Movie not found')));
+        }
+
+        return Scaffold(
       bottomNavigationBar: isDesktop
           ? null
           : SafeArea(
@@ -50,7 +58,7 @@ class MovieDetailPage extends ConsumerWidget {
             ),
       body: Column(
         children: [
-          const DesktopHeader(),
+          DesktopHeader(onSignIn: () => context.push('/login')),
           TicketflixPageHeader(
             title: movie.title,
             actions: [
@@ -106,6 +114,8 @@ class MovieDetailPage extends ConsumerWidget {
           ),
         ],
       ),
+        );
+      },
     );
   }
 }

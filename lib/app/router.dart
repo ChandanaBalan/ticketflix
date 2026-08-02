@@ -7,7 +7,7 @@ import '../features/auth/login_screen.dart';
 import '../features/auth/register_screen.dart';
 import '../features/home/home_page.dart';
 import '../features/movies/movie_detail_page.dart';
-import '../features/movies/movie_list_page.dart';
+import '../features/movies/views/movie_list_view.dart';
 import '../features/splash/splash_screen.dart';
 
 final ticketflixRouter = GoRouter(

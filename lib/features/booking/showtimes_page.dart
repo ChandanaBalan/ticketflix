@@ -5,10 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
 import '../../core/responsive/responsive.dart';
-import '../../shared/models.dart';
-import 'booking_state.dart';
-
-enum _ShowtimeSort { recommended, lowestPrice, highestPrice, earliest }
+import '../movies/models/movie.dart';
+import 'models/booking_models.dart';
+import 'view_models/booking_providers.dart';
 
 class _FilterSelection {
   const _FilterSelection({
@@ -32,161 +31,80 @@ class ShowtimesPage extends ConsumerStatefulWidget {
 }
 
 class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
-  var selectedDay = 0;
-  var sort = _ShowtimeSort.recommended;
-  var specialFormatsOnly = false;
-  var cancellableOnly = false;
-  var favouritesOnly = false;
-  var searching = false;
-  var searchQuery = '';
-  final favouriteCinemaIds = <String>{};
-
   Future<void> _openSortOptions() async {
-    final selected = await showTicketflixSheet<_ShowtimeSort>(
+    final current = ref.read(showtimesViewModelProvider(widget.movieId));
+    final selected = await showTicketflixSheet<ShowtimeSort>(
       context: context,
-      builder: (context) => _SortSheet(selected: sort),
+      builder: (context) => _SortSheet(selected: current.sort),
     );
-    if (selected != null && mounted) setState(() => sort = selected);
+    if (selected != null && mounted) {
+      ref.read(showtimesViewModelProvider(widget.movieId).notifier).setSort(selected);
+    }
   }
 
   Future<void> _openFilterOptions() async {
+    final current = ref.read(showtimesViewModelProvider(widget.movieId));
     final selected = await showTicketflixSheet<_FilterSelection>(
       context: context,
       builder: (context) => _FilterSheet(
-        specialFormatsOnly: specialFormatsOnly,
-        cancellableOnly: cancellableOnly,
-        favouritesOnly: favouritesOnly,
+        specialFormatsOnly: current.specialFormatsOnly,
+        cancellableOnly: current.cancellableOnly,
+        favouritesOnly: current.favouritesOnly,
       ),
     );
     if (selected == null || !mounted) return;
-    setState(() {
-      specialFormatsOnly = selected.specialFormatsOnly;
-      cancellableOnly = selected.cancellableOnly;
-      favouritesOnly = selected.favouritesOnly;
-    });
+    final viewModel = ref.read(showtimesViewModelProvider(widget.movieId).notifier);
+    viewModel
+      ..setSpecialFormats(selected.specialFormatsOnly)
+      ..setCancellable(selected.cancellableOnly)
+      ..setFavouritesOnly(selected.favouritesOnly);
   }
 
-  String get _sortLabel => switch (sort) {
-    _ShowtimeSort.recommended => 'Sort by',
-    _ShowtimeSort.lowestPrice => 'Price: low to high',
-    _ShowtimeSort.highestPrice => 'Price: high to low',
-    _ShowtimeSort.earliest => 'Earliest show',
+  String _sortLabel(ShowtimeSort sort) => switch (sort) {
+    ShowtimeSort.recommended => 'Sort by',
+    ShowtimeSort.lowestPrice => 'Price: low to high',
+    ShowtimeSort.highestPrice => 'Price: high to low',
+    ShowtimeSort.earliest => 'Earliest show',
   };
 
   @override
   Widget build(BuildContext context) {
-    final repository = ref.watch(mockRepositoryProvider);
-    final movie = repository.movie(widget.movieId);
-    final draft = ref.watch(bookingProvider);
+    final state = ref.watch(showtimesViewModelProvider(widget.movieId));
+    final viewModel = ref.read(showtimesViewModelProvider(widget.movieId).notifier);
+    final movie = state.movie;
+    final draft = ref.watch(bookingSessionProvider);
     final formatLabel = draft.format.label;
     final languageLabel = draft.language.label;
-    final normalizedSearch = searchQuery.trim().toLowerCase();
-    final cinemas = repository.cinemas
-        .map((cinema) {
-          final cinemaMatches =
-              normalizedSearch.isEmpty ||
-              cinema.name.toLowerCase().contains(normalizedSearch) ||
-              cinema.shortName.toLowerCase().contains(normalizedSearch);
-          final showtimes = cinema.showtimes.where((showtime) {
-            if (!specialFormatsOnly) return true;
-            if (showtime.experience.isEmpty || showtime.experience == '2D') {
-              return false;
-            }
-            return cinemaMatches ||
-                showtime.time.toLowerCase().contains(normalizedSearch) ||
-                showtime.experience.toLowerCase().contains(normalizedSearch);
-          }).toList();
-          final searchedShowtimes = specialFormatsOnly
-              ? showtimes
-              : showtimes.where((showtime) {
-                  if (cinemaMatches || normalizedSearch.isEmpty) return true;
-                  return showtime.time.toLowerCase().contains(
-                        normalizedSearch,
-                      ) ||
-                      showtime.experience.toLowerCase().contains(
-                        normalizedSearch,
-                      );
-                }).toList();
-          return (cinema: cinema, showtimes: searchedShowtimes);
-        })
-        .where((listing) {
-          if (cancellableOnly && !listing.cinema.cancellationAvailable) {
-            return false;
-          }
-          if (favouritesOnly &&
-              !favouriteCinemaIds.contains(listing.cinema.id)) {
-            return false;
-          }
-          return listing.showtimes.isNotEmpty;
-        })
-        .toList();
-    int lowestPrice(Iterable<Showtime> showtimes) => showtimes.fold(
-      1 << 30,
-      (lowest, showtime) => showtime.price < lowest ? showtime.price : lowest,
-    );
-    int timeInMinutes(Showtime showtime) {
-      final match = RegExp(
-        r'^(\d{1,2}):(\d{2})\s*(AM|PM)$',
-        caseSensitive: false,
-      ).firstMatch(showtime.time);
-      if (match == null) return 1 << 30;
-      var hour = int.parse(match.group(1)!);
-      final minute = int.parse(match.group(2)!);
-      final period = match.group(3)!.toUpperCase();
-      if (period == 'AM' && hour == 12) hour = 0;
-      if (period == 'PM' && hour != 12) hour += 12;
-      return hour * 60 + minute;
-    }
-
-    int earliestShow(Iterable<Showtime> showtimes) =>
-        showtimes.fold(1 << 30, (earliest, showtime) {
-          final minutes = timeInMinutes(showtime);
-          return minutes < earliest ? minutes : earliest;
-        });
-
-    if (sort != _ShowtimeSort.recommended) {
-      cinemas.sort((a, b) {
-        switch (sort) {
-          case _ShowtimeSort.lowestPrice:
-            return lowestPrice(a.showtimes).compareTo(lowestPrice(b.showtimes));
-          case _ShowtimeSort.highestPrice:
-            return lowestPrice(b.showtimes).compareTo(lowestPrice(a.showtimes));
-          case _ShowtimeSort.earliest:
-            return earliestShow(
-              a.showtimes,
-            ).compareTo(earliestShow(b.showtimes));
-          case _ShowtimeSort.recommended:
-            return 0;
-        }
-      });
+    final cinemas = state.visibleCinemas;
+    if (movie == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
       backgroundColor: AppColors.surfaceTint,
       body: Column(
         children: [
-          const DesktopHeader(),
+          DesktopHeader(onSignIn: () => context.push('/login')),
           ColoredBox(
             color: AppColors.surface,
             child: TicketflixPageHeader(
               title: movie.title,
               subtitle: 'Movie runtime: ${movie.runtime}',
               actions: [
-                if (searching)
+                if (state.searching)
                   SizedBox(
                     width: context.isMobile ? 210 : 300,
                     child: TextField(
                       autofocus: true,
-                      onChanged: (value) => setState(() => searchQuery = value),
+                      onChanged: viewModel.setSearchQuery,
                       decoration: InputDecoration(
                         hintText: 'Search theatres or shows',
                         prefixIcon: const Icon(Icons.search),
-                        suffixIcon: searchQuery.isEmpty
+                        suffixIcon: state.searchQuery.isEmpty
                             ? null
                             : IconButton(
                                 tooltip: 'Clear search',
-                                onPressed: () =>
-                                    setState(() => searchQuery = ''),
+                                onPressed: () => viewModel.setSearchQuery(''),
                                 icon: const Icon(Icons.close),
                               ),
                         isDense: true,
@@ -194,12 +112,9 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
                     ),
                   ),
                 IconButton(
-                  tooltip: searching ? 'Close search' : 'Search cinemas',
-                  onPressed: () => setState(() {
-                    searching = !searching;
-                    if (!searching) searchQuery = '';
-                  }),
-                  icon: Icon(searching ? Icons.close : Icons.search, size: 28),
+                  tooltip: state.searching ? 'Close search' : 'Search cinemas',
+                  onPressed: () => viewModel.setSearching(!state.searching),
+                  icon: Icon(state.searching ? Icons.close : Icons.search, size: 28),
                 ),
                 IconButton(
                   tooltip: 'Showtime filters',
@@ -210,8 +125,8 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
             ),
           ),
           _DateStrip(
-            selectedDay: selectedDay,
-            onSelected: (value) => setState(() => selectedDay = value),
+            selectedDay: state.selectedDay,
+            onSelected: viewModel.setDay,
           ),
           Container(
             color: AppColors.surface,
@@ -265,31 +180,28 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
                 children: [
                   FilterChip(
                     avatar: const Icon(Icons.swap_vert, size: 18),
-                    label: Text(_sortLabel),
-                    selected: sort != _ShowtimeSort.recommended,
+                    label: Text(_sortLabel(state.sort)),
+                    selected: state.sort != ShowtimeSort.recommended,
                     onSelected: (_) => _openSortOptions(),
                   ),
                   const SizedBox(width: 10),
                   FilterChip(
                     label: const Text('Special Formats'),
-                    selected: specialFormatsOnly,
-                    onSelected: (value) =>
-                        setState(() => specialFormatsOnly = value),
+                    selected: state.specialFormatsOnly,
+                    onSelected: viewModel.setSpecialFormats,
                   ),
                   const SizedBox(width: 10),
                   FilterChip(
                     label: const Text('Cancellable'),
-                    selected: cancellableOnly,
-                    onSelected: (value) =>
-                        setState(() => cancellableOnly = value),
+                    selected: state.cancellableOnly,
+                    onSelected: viewModel.setCancellable,
                   ),
                   const SizedBox(width: 10),
                   FilterChip(
                     avatar: const Icon(Icons.favorite_border, size: 18),
                     label: const Text('Favourites'),
-                    selected: favouritesOnly,
-                    onSelected: (value) =>
-                        setState(() => favouritesOnly = value),
+                    selected: state.favouritesOnly,
+                    onSelected: viewModel.setFavouritesOnly,
                   ),
                 ],
               ),
@@ -315,21 +227,17 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
                         child: _CinemaCard(
                           cinema: listing.cinema,
                           showtimes: listing.showtimes,
-                          isFavorite: favouriteCinemaIds.contains(
+                          isFavorite: state.favouriteCinemaIds.contains(
                             listing.cinema.id,
                           ),
-                          onFavorite: () => setState(() {
-                            if (!favouriteCinemaIds.add(listing.cinema.id)) {
-                              favouriteCinemaIds.remove(listing.cinema.id);
-                            }
-                          }),
+                          onFavorite: () => viewModel.toggleFavourite(listing.cinema.id),
                           onShowtime: (showtime) {
                             if (showtime.soldOut) return;
                             ref
-                                .read(bookingProvider.notifier)
+                                .read(bookingSessionProvider.notifier)
                                 .setShowtime(showtime.id);
                             context.push(
-                              '/movies/${movie.id}/shows/${showtime.id}/seats?cinemaId=${listing.cinema.id}&day=$selectedDay',
+                              '/movies/${movie.id}/shows/${showtime.id}/seats?cinemaId=${listing.cinema.id}&day=${state.selectedDay}',
                             );
                           },
                         ),
@@ -346,13 +254,13 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
 class _SortSheet extends StatelessWidget {
   const _SortSheet({required this.selected});
 
-  final _ShowtimeSort selected;
+  final ShowtimeSort selected;
 
   static const options = [
-    (_ShowtimeSort.recommended, 'Recommended'),
-    (_ShowtimeSort.lowestPrice, 'Price: low to high'),
-    (_ShowtimeSort.highestPrice, 'Price: high to low'),
-    (_ShowtimeSort.earliest, 'Earliest show'),
+    (ShowtimeSort.recommended, 'Recommended'),
+    (ShowtimeSort.lowestPrice, 'Price: low to high'),
+    (ShowtimeSort.highestPrice, 'Price: high to low'),
+    (ShowtimeSort.earliest, 'Earliest show'),
   ];
 
   @override
@@ -371,7 +279,7 @@ class _SortSheet extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
           ),
-          RadioGroup<_ShowtimeSort>(
+          RadioGroup<ShowtimeSort>(
             groupValue: selected,
             onChanged: (value) {
               if (value != null) Navigator.of(context).pop(value);
@@ -379,7 +287,7 @@ class _SortSheet extends StatelessWidget {
             child: Column(
               children: [
                 for (final option in options)
-                  RadioListTile<_ShowtimeSort>(
+                  RadioListTile<ShowtimeSort>(
                     value: option.$1,
                     title: Text(option.$2),
                     activeColor: AppColors.primary,

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
 import '../../core/responsive/responsive.dart';
-import '../../shared/models.dart';
-import 'booking_state.dart';
+import 'models/booking_models.dart';
+import 'view_models/booking_providers.dart';
+import 'view_models/seat_selection_view_model.dart';
 
 class SeatSelectionPage extends ConsumerStatefulWidget {
   const SeatSelectionPage({
@@ -28,7 +30,6 @@ class SeatSelectionPage extends ConsumerStatefulWidget {
 class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
   var promptedForCount = false;
 
-  static final seats = _createSeats();
   static const _weekdays = [
     '',
     'Mon',
@@ -63,7 +64,7 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
   Future<void> _askSeatCount() async {
     if (promptedForCount || !mounted) return;
     promptedForCount = true;
-    final current = ref.read(bookingProvider).ticketCount;
+    final current = ref.read(bookingSessionProvider).ticketCount;
     final count = await showTicketflixSheet<int>(
       context: context,
       builder: (context) => _SeatCountSheet(initialCount: current),
@@ -73,7 +74,7 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
       Navigator.of(context).maybePop();
       return;
     }
-    ref.read(bookingProvider.notifier).setTicketCount(count);
+    ref.read(bookingSessionProvider.notifier).setTicketCount(count);
   }
 
   Future<void> _showTerms() async {
@@ -93,22 +94,31 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final repository = ref.watch(mockRepositoryProvider);
-    final movie = repository.movie(widget.movieId);
-    final cinema = repository.cinemas.firstWhere(
-      (cinema) => cinema.id == widget.cinemaId,
-      orElse: () => repository.cinemas.first,
+    final selection = ref.watch(
+      seatSelectionViewModelProvider(
+        SeatSelectionArgs(
+          movieId: widget.movieId,
+          showId: widget.showId,
+          cinemaId: widget.cinemaId,
+          dayIndex: widget.dayIndex,
+        ),
+      ),
     );
-    final showtime = cinema.showtimes.firstWhere(
-      (showtime) => showtime.id == widget.showId,
-      orElse: () => cinema.showtimes.first,
-    );
+
+    return selection.when(
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, _) => Scaffold(body: Center(child: Text('Unable to load seats: $error'))),
+      data: (loaded) {
+    final movie = loaded.movie;
+    final cinema = loaded.cinema;
+    final showtime = loaded.showtime;
+    final seats = loaded.seats;
     final bookingDate = DateTime.now().add(Duration(days: widget.dayIndex));
     final bookingDateLabel =
         '${_weekdays[bookingDate.weekday]}, ${bookingDate.day} ${_months[bookingDate.month - 1]}';
     final topShowtimes = cinema.showtimes.take(3).toList();
-    final draft = ref.watch(bookingProvider);
-    final total = ref.read(bookingProvider.notifier).totalFor(seats);
+    final draft = ref.watch(bookingSessionProvider);
+    final total = ref.read(bookingSessionProvider.notifier).totalFor(seats);
     final canPay = draft.selectedSeatIds.length == draft.ticketCount;
 
     return Scaffold(
@@ -131,7 +141,7 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
       ),
       body: Column(
         children: [
-          const DesktopHeader(),
+          DesktopHeader(onSignIn: () => context.push('/login')),
           TicketflixPageHeader(title: movie.title, subtitle: cinema.name),
           Expanded(
             child: CustomScrollView(
@@ -230,62 +240,25 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
         ],
       ),
     );
+      },
+    );
   }
 
   void _toggleSeat(Seat seat) {
-    final changed = ref.read(bookingProvider.notifier).toggleSeat(seat);
+    final changed = ref.read(bookingSessionProvider.notifier).toggleSeat(seat);
     if (!changed && seat.status != SeatStatus.sold) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
             content: Text(
-              'You can select up to ${ref.read(bookingProvider).ticketCount} seats.',
+              'You can select up to ${ref.read(bookingSessionProvider).ticketCount} seats.',
             ),
           ),
         );
     }
   }
 
-  static List<Seat> _createSeats() {
-    const sold = {
-      'G1',
-      'G2',
-      'G3',
-      'G4',
-      'G5',
-      'G6',
-      'G7',
-      'F4',
-      'F5',
-      'F6',
-      'E2',
-      'E3',
-      'E4',
-      'E5',
-      'E6',
-      'E7',
-      'E8',
-      'D5',
-      'B3',
-      'B4',
-      'B5',
-      'B6',
-    };
-    return [
-      for (final row in const ['G', 'F', 'E', 'D', 'C', 'B', 'A'])
-        for (var number = 1; number <= (row == 'F' ? 10 : 8); number++)
-          Seat(
-            id: '$row$number',
-            row: row,
-            number: number,
-            price: ['B', 'A'].contains(row) ? 780 : 880,
-            status: sold.contains('$row$number')
-                ? SeatStatus.sold
-                : SeatStatus.available,
-          ),
-    ];
-  }
 }
 
 class _TopShowtime extends StatelessWidget {

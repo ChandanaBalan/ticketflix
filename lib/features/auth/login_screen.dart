@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
+import 'models/auth_models.dart';
 import 'auth_widgets.dart';
+import 'view_models/auth_providers.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _otpController = TextEditingController();
-  var _usePhone = false;
-  var _otpSent = false;
-  var _isLoading = false;
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -33,27 +32,37 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _sendOtp() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _otpSent = true);
+    await ref.read(loginViewModelProvider.notifier).sendOtp(
+      _phoneController.text.trim(),
+    );
   }
 
   void _setAuthMethod(bool usePhone) {
-    setState(() {
-      _usePhone = usePhone;
-      _otpSent = false;
-      _otpController.clear();
-    });
+    ref.read(loginViewModelProvider.notifier).setMethod(usePhone);
+    _otpController.clear();
   }
 
   Future<void> _login() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _isLoading = true);
-    await Future<void>.delayed(const Duration(milliseconds: 500));
-    if (!mounted) return;
-    context.go('/home');
+    final state = ref.read(loginViewModelProvider);
+    final success = await ref.read(loginViewModelProvider.notifier).signIn(
+      AuthCredentials(
+        method: state.method,
+        email: _emailController.text.trim(),
+        phone: _phoneController.text.trim(),
+        password: _passwordController.text,
+        otp: _otpController.text.trim(),
+      ),
+    );
+    if (success && mounted) context.go('/home');
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(loginViewModelProvider);
+    final usePhone = state.method == AuthMethod.phone;
+    final otpSent = state.otpSent;
+    final isLoading = state.isLoading;
     return AuthShell(
       showBack: false,
       child: Form(
@@ -71,9 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
               style: TextStyle(color: AppColors.muted, fontSize: 15),
             ),
             const SizedBox(height: 28),
-            AuthMethodToggle(usePhone: _usePhone, onChanged: _setAuthMethod),
+            AuthMethodToggle(usePhone: usePhone, onChanged: _setAuthMethod),
             const SizedBox(height: 16),
-            if (_usePhone)
+            if (usePhone)
               AuthTextField(
                 controller: _phoneController,
                 label: 'Mobile number',
@@ -96,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 validator: emailValidator,
               ),
             const SizedBox(height: 16),
-            if (_usePhone && _otpSent) ...[
+            if (usePhone && otpSent) ...[
               Text(
                 'We sent a 6-digit OTP to ${_phoneController.text.trim()}.',
                 style: const TextStyle(color: AppColors.muted, fontSize: 14),
@@ -113,14 +122,14 @@ class _LoginScreenState extends State<LoginScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () => setState(() {
-                    _otpSent = false;
+                  onPressed: () {
+                    ref.read(loginViewModelProvider.notifier).resetOtp();
                     _otpController.clear();
-                  }),
+                  },
                   child: const Text('Change number'),
                 ),
               ),
-            ] else if (!_usePhone) ...[
+            ] else if (!usePhone) ...[
               AuthTextField(
                 controller: _passwordController,
                 label: 'Password',
@@ -138,23 +147,23 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
             TicketflixButton(
-              label: _isLoading
+              label: isLoading
                   ? 'Signing in...'
-                  : _usePhone && !_otpSent
+                  : usePhone && !otpSent
                   ? 'Send OTP'
                   : 'Sign in',
-              icon: _usePhone && !_otpSent
+              icon: usePhone && !otpSent
                   ? Icons.sms_outlined
                   : Icons.login_rounded,
-              onPressed: _isLoading
+              onPressed: isLoading
                   ? null
-                  : _usePhone && !_otpSent
+                  : usePhone && !otpSent
                   ? _sendOtp
                   : _login,
             ),
             const SizedBox(height: 12),
             OutlinedButton.icon(
-              onPressed: _isLoading ? null : () => context.go('/home'),
+              onPressed: isLoading ? null : () => context.go('/home'),
               icon: const Icon(Icons.explore_outlined),
               label: const Text('Continue as guest'),
               style: OutlinedButton.styleFrom(

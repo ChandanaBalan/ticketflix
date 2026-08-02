@@ -1,4 +1,5 @@
-import '../../shared/models.dart';
+import '../../features/booking/models/booking_models.dart';
+import '../../features/movies/models/movie.dart';
 
 class MockRepository {
   const MockRepository();

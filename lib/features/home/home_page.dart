@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
 import '../../core/responsive/responsive.dart';
-import '../booking/booking_state.dart';
+import 'view_models/home_view_model.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -73,8 +73,11 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final movies = ref.watch(mockRepositoryProvider).movies;
-    return Scaffold(
+    final moviesState = ref.watch(homeViewModelProvider);
+    return moviesState.when(
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, _) => Scaffold(body: Center(child: Text('Unable to load movies: $error'))),
+      data: (movies) => Scaffold(
       bottomNavigationBar: context.isDesktop
           ? null
           : NavigationBar(
@@ -139,7 +142,7 @@ class HomePage extends ConsumerWidget {
             ),
       body: Column(
         children: [
-          const DesktopHeader(),
+          DesktopHeader(onSignIn: () => context.push('/login')),
           Expanded(
             child: CustomScrollView(
               slivers: [
@@ -267,7 +270,10 @@ class HomePage extends ConsumerWidget {
                           itemCount: movies.length,
                           itemBuilder: (context, index) => MoviePosterCard(
                             width: double.infinity,
-                            movie: movies[index],
+                            title: movies[index].title,
+                            posterUrl: movies[index].posterUrl,
+                            likes: movies[index].likes,
+                            genres: movies[index].genres,
                             onTap: () =>
                                 context.push('/movies/${movies[index].id}'),
                           ),
@@ -286,7 +292,10 @@ class HomePage extends ConsumerWidget {
                         separatorBuilder: (_, _) => const SizedBox(width: 12),
                         itemBuilder: (context, index) => MoviePosterCard(
                           width: 145,
-                          movie: movies[index],
+                          title: movies[index].title,
+                          posterUrl: movies[index].posterUrl,
+                          likes: movies[index].likes,
+                          genres: movies[index].genres,
                           onTap: () =>
                               context.push('/movies/${movies[index].id}'),
                         ),
@@ -297,6 +306,7 @@ class HomePage extends ConsumerWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

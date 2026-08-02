@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ticketflix_v2/app/ticketflix_app.dart';
 import 'package:ticketflix_v2/features/booking/showtimes_page.dart';
-import 'package:ticketflix_v2/features/movies/movie_list_page.dart';
+import 'package:ticketflix_v2/features/movies/views/movie_list_view.dart';
 
 void main() {
   testWidgets('home renders at the target mobile width', (tester) async {

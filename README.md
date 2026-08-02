@@ -21,16 +21,23 @@ create an account, use phone OTP authentication, or continue as a guest.
 
 ## Architecture
 
-The project is organized by feature under `lib/features`, with application
-routing and theming in `lib/app`, reusable visual primitives in `lib/core`, mock
-data in `lib/data`, and API-ready domain models in `lib/shared`.
+The project uses a lightweight feature-based MVVM structure. Each feature owns
+its models, repository contracts and implementations, ViewModels, views, and
+feature widgets. Views render Riverpod state and handle Flutter-only concerns
+such as controllers, focus, animations, dialogs, snackbars, and navigation.
+ViewModels own user-visible state and business rules, while repositories hide
+mock or future network data sources.
 
-`MockRepository` is the temporary source for movies, their images and metadata
-(genres, descriptions, languages, formats, runtime, and cast), cinemas, and
-showtimes. A future backend integration should implement the same repository
-boundary and map API payloads to the existing domain models. `BookingDraft` is
-the single source of truth for the selected format, showtime, ticket count, and
-seats.
+`lib/app` contains composition, routing, and theme assembly. `lib/core`
+contains feature-neutral design-system and responsive helpers. Features may
+depend on core and on public models or repositories from another feature, but
+core must never import a feature and ViewModels must not depend on `BuildContext`
+or GoRouter.
+
+Repository providers are typed to interfaces, so production implementations can
+replace the current mock implementations through Riverpod overrides. The
+booking session ViewModel is the single source of truth for selected format,
+showtime, ticket count, and seats across the booking flow.
 
 ## Responsive behavior
 

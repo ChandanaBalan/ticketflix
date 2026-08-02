@@ -1,37 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
 import 'auth_widgets.dart';
+import 'view_models/auth_providers.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
+class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  var _submitted = false;
-
   @override
   void dispose() {
     _emailController.dispose();
     super.dispose();
   }
 
-  void _sendResetLink() {
+  Future<void> _sendResetLink() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _submitted = true);
+    await ref.read(forgotPasswordViewModelProvider.notifier).sendResetLink(
+      _emailController.text.trim(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(forgotPasswordViewModelProvider);
     return AuthShell(
-      child: _submitted
+      child: state.submitted
           ? _ResetLinkSent(email: _emailController.text.trim())
           : Form(
               key: _formKey,
@@ -58,9 +61,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                   const SizedBox(height: 24),
                   TicketflixButton(
-                    label: 'Send reset link',
+                    label: state.isLoading ? 'Sending...' : 'Send reset link',
                     icon: Icons.mail_outline_rounded,
-                    onPressed: _sendResetLink,
+                    onPressed: state.isLoading ? null : _sendResetLink,
                   ),
                   const SizedBox(height: 14),
                   TextButton(

@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
+import 'models/auth_models.dart';
 import 'auth_widgets.dart';
+import 'view_models/auth_providers.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -20,10 +23,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
   final _otpController = TextEditingController();
-  var _usePhone = false;
-  var _otpSent = false;
-  var _isLoading = false;
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -37,27 +36,41 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _sendOtp() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _otpSent = true);
+    await ref.read(registerViewModelProvider.notifier).sendOtp(
+      _phoneController.text.trim(),
+    );
   }
 
   void _setAuthMethod(bool usePhone) {
-    setState(() {
-      _usePhone = usePhone;
-      _otpSent = false;
-      _otpController.clear();
-    });
+    ref.read(registerViewModelProvider.notifier).setMethod(usePhone);
+    _otpController.clear();
   }
 
   Future<void> _register() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _isLoading = true);
-    await Future<void>.delayed(const Duration(milliseconds: 500));
-    if (!mounted) return;
-    context.go('/home');
+    final state = ref.read(registerViewModelProvider);
+    final success = await ref.read(registerViewModelProvider.notifier).register(
+      RegistrationRequest(
+        name: _nameController.text.trim(),
+        credentials: AuthCredentials(
+          method: state.method,
+          email: _emailController.text.trim(),
+          phone: _phoneController.text.trim(),
+          password: _passwordController.text,
+          otp: _otpController.text.trim(),
+        ),
+        confirmPassword: _confirmController.text,
+      ),
+    );
+    if (success && mounted) context.go('/home');
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(registerViewModelProvider);
+    final usePhone = state.method == AuthMethod.phone;
+    final otpSent = state.otpSent;
+    final isLoading = state.isLoading;
     return AuthShell(
       child: Form(
         key: _formKey,
@@ -83,9 +96,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   requiredField(value, 'Enter your full name'),
             ),
             const SizedBox(height: 16),
-            AuthMethodToggle(usePhone: _usePhone, onChanged: _setAuthMethod),
+            AuthMethodToggle(usePhone: usePhone, onChanged: _setAuthMethod),
             const SizedBox(height: 16),
-            if (_usePhone)
+            if (usePhone)
               AuthTextField(
                 controller: _phoneController,
                 label: 'Mobile number',
@@ -105,7 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 validator: emailValidator,
               ),
             const SizedBox(height: 16),
-            if (_usePhone && _otpSent) ...[
+            if (usePhone && otpSent) ...[
               Text(
                 'We sent a 6-digit OTP to ${_phoneController.text.trim()}.',
                 style: const TextStyle(color: AppColors.muted, fontSize: 14),
@@ -122,14 +135,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () => setState(() {
-                    _otpSent = false;
+                  onPressed: () {
+                    ref.read(registerViewModelProvider.notifier).resetOtp();
                     _otpController.clear();
-                  }),
+                  },
                   child: const Text('Change number'),
                 ),
               ),
-            ] else if (!_usePhone) ...[
+            ] else if (!usePhone) ...[
               AuthTextField(
                 controller: _passwordController,
                 label: 'Password',
@@ -151,17 +164,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ],
             const SizedBox(height: 24),
             TicketflixButton(
-              label: _isLoading
+              label: isLoading
                   ? 'Creating account...'
-                  : _usePhone && !_otpSent
+                  : usePhone && !otpSent
                   ? 'Send OTP'
                   : 'Create account',
-              icon: _usePhone && !_otpSent
+              icon: usePhone && !otpSent
                   ? Icons.sms_outlined
                   : Icons.person_add_alt_rounded,
-              onPressed: _isLoading
+              onPressed: isLoading
                   ? null
-                  : _usePhone && !_otpSent
+                  : usePhone && !otpSent
                   ? _sendOtp
                   : _register,
             ),
