@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 
@@ -94,7 +95,7 @@ ThemeData buildTicketflixTheme({Brightness brightness = Brightness.light}) {
       foregroundColor: AppColors.accent,
     ),
     pageTransitionsTheme: const PageTransitionsTheme(
-      builders: {
+      builders: <TargetPlatform, PageTransitionsBuilder>{
         TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
         TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
         TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
