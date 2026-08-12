@@ -69,7 +69,7 @@ void main() {
 
     await tester.pumpWidget(
       const ProviderScope(
-        child: MaterialApp(home: ShowtimesPage(movieId: 'chithram')),
+        child: MaterialApp(home: ShowtimesPage(movieId: 'premam')),
       ),
     );
     await tester.pumpAndSettle();
@@ -102,7 +102,7 @@ void main() {
 
     await tester.pumpWidget(
       const ProviderScope(
-        child: MaterialApp(home: ShowtimesPage(movieId: 'chithram')),
+        child: MaterialApp(home: ShowtimesPage(movieId: 'premam')),
       ),
     );
     await tester.pumpAndSettle();

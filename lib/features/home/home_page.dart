@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
 import '../../core/responsive/responsive.dart';
+import '../../data/mock/mock_assets.dart';
 import 'view_models/home_view_model.dart';
 
 class HomePage extends ConsumerWidget {
@@ -14,61 +15,6 @@ class HomePage extends ConsumerWidget {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text('$label is coming soon.')));
-  }
-
-  Future<void> _showFeaturePreview(
-    BuildContext context, {
-    required String title,
-    required String description,
-    required String actionLabel,
-  }) async {
-    await showTicketflixSheet<void>(
-      context: context,
-      builder: (context) => SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SheetHandle(),
-              Icon(
-                title == 'Prebooking'
-                    ? Icons.event_available_rounded
-                    : Icons.handshake_outlined,
-                color: AppColors.primary,
-                size: 42,
-              ),
-              const SizedBox(height: 14),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                description,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: 20),
-              TicketflixButton(
-                label: actionLabel,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('$title setup saved for later.')),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   @override
@@ -92,21 +38,9 @@ class HomePage extends ConsumerWidget {
                   if (index == 3) {
                     context.push('/movies');
                   } else if (index == 1) {
-                    _showFeaturePreview(
-                      context,
-                      title: 'Prebooking',
-                      description:
-                          'Get early access to popular releases and reserve your seats before regular bookings open.',
-                      actionLabel: 'Join prebooking list',
-                    );
+                    context.push('/prebooking');
                   } else if (index == 2) {
-                    _showFeaturePreview(
-                      context,
-                      title: 'Affiliate & Refer',
-                      description:
-                          'Share movies with friends, track referrals, and unlock Ticketflix rewards in one place.',
-                      actionLabel: 'Create referral link',
-                    );
+                    context.push('/refer-earn');
                   } else if (index != 0) {
                     _comingSoon(
                       context,
@@ -205,10 +139,8 @@ class HomePage extends ConsumerWidget {
                                 child: Stack(
                                   fit: StackFit.expand,
                                   children: [
-                                    TicketflixRemoteImage(
-                                      url:
-                                          movies[1].bannerUrl ??
-                                          movies[1].posterUrl,
+                                    const TicketflixRemoteImage(
+                                      url: MockAssets.premamPoster,
                                     ),
                                     DecoratedBox(
                                       decoration: BoxDecoration(

@@ -12,8 +12,7 @@ class MockMovieRepository implements MovieRepository {
 
   @override
   Future<Movie?> fetchMovieById(String movieId) async {
-    final movies = source.movies;
-    for (final movie in movies) {
+    for (final movie in [...source.movies, ...source.preReleaseMovies]) {
       if (movie.id == movieId) return movie;
     }
     return null;

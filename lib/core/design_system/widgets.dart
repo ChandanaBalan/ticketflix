@@ -228,6 +228,7 @@ class MoviePosterCard extends StatelessWidget {
     this.genres = const [],
     required this.onTap,
     this.showLikes = false,
+    this.releaseLabel,
     this.width = 145,
     super.key,
   });
@@ -238,6 +239,7 @@ class MoviePosterCard extends StatelessWidget {
   final List<String> genres;
   final VoidCallback onTap;
   final bool showLikes;
+  final String? releaseLabel;
   final double width;
 
   @override
@@ -291,6 +293,19 @@ class MoviePosterCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
+              if (releaseLabel != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  'Releases $releaseLabel',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
               const SizedBox(height: 2),
               Text(
                 genres.join(' • '),
@@ -301,6 +316,72 @@ class MoviePosterCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CastMemberTile extends StatelessWidget {
+  const CastMemberTile({
+    required this.name,
+    required this.role,
+    this.photoUrl,
+    this.width = 104,
+    super.key,
+  });
+
+  final String name;
+  final String role;
+  final String? photoUrl;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    final photoHeight = width * 88 / 104;
+
+    return SizedBox(
+      width: width,
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: photoUrl != null
+                ? SizedBox(
+                    width: width,
+                    height: photoHeight,
+                    child: TicketflixRemoteImage(url: photoUrl!),
+                  )
+                : Container(
+                    width: width,
+                    height: photoHeight,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.person_outline_rounded,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      size: 38,
+                    ),
+                  ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12),
+          ),
+          Text(
+            role,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 11,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -318,6 +399,15 @@ class TicketflixRemoteImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (url.startsWith('assets/')) {
+      return Image.asset(
+        url,
+        fit: fit,
+        filterQuality: FilterQuality.medium,
+        errorBuilder: (context, error, stackTrace) => _imageErrorPlaceholder(),
+      );
+    }
+
     return Image.network(
       _imageRequestUrl(url),
       fit: fit,
@@ -338,22 +428,30 @@ class TicketflixRemoteImage extends StatelessWidget {
           ),
         );
       },
-      errorBuilder: (context, error, stackTrace) => const ColoredBox(
-        color: AppColors.midnight,
-        child: Center(
-          child: Icon(
-            Icons.local_movies_outlined,
-            color: AppColors.accent,
-            size: 32,
-          ),
-        ),
-      ),
+      errorBuilder: (context, error, stackTrace) => _imageErrorPlaceholder(),
     );
   }
 }
 
+Widget _imageErrorPlaceholder() {
+  return const ColoredBox(
+    color: AppColors.midnight,
+    child: Center(
+      child: Icon(
+        Icons.local_movies_outlined,
+        color: AppColors.accent,
+        size: 32,
+      ),
+    ),
+  );
+}
+
 String _imageRequestUrl(String sourceUrl) {
   if (!kIsWeb) return sourceUrl;
+  final host = Uri.base.host;
+  // The /image-proxy route exists only on the hosted Cloudflare worker.
+  // During `flutter run -d chrome`, load images directly from the source.
+  if (host == 'localhost' || host == '127.0.0.1') return sourceUrl;
   return Uri.base
       .resolve('/image-proxy')
       .replace(queryParameters: {'url': sourceUrl})

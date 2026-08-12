@@ -5,12 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
 import '../../core/responsive/responsive.dart';
-import 'models/movie.dart';
+import '../movies/models/movie.dart';
 import '../booking/view_models/booking_providers.dart';
-import 'view_models/movie_providers.dart';
+import 'view_models/prebooking_providers.dart';
 
-class MovieDetailPage extends ConsumerWidget {
-  const MovieDetailPage({required this.movieId, super.key});
+class PrebookingDetailPage extends ConsumerWidget {
+  const PrebookingDetailPage({required this.movieId, super.key});
 
   final String movieId;
 
@@ -27,19 +27,20 @@ class MovieDetailPage extends ConsumerWidget {
     ref
         .read(bookingSessionProvider.notifier)
         .setFormat(choice.language, choice.format);
-    context.push('/movies/${movie.id}/shows');
+    context.push('/prebooking/${movie.id}/shows');
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDesktop = context.isDesktop;
-    final movieState = ref.watch(movieDetailViewModelProvider(movieId));
+    final movieState = ref.watch(prebookingDetailViewModelProvider(movieId));
 
     return movieState.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (error, _) =>
-          Scaffold(body: Center(child: Text('Unable to load movie: $error'))),
+      error: (error, _) => Scaffold(
+        body: Center(child: Text('Unable to load movie: $error')),
+      ),
       data: (movie) {
         if (movie == null) {
           return const Scaffold(body: Center(child: Text('Movie not found')));
@@ -53,7 +54,8 @@ class MovieDetailPage extends ConsumerWidget {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
                     child: TicketflixButton(
-                      label: 'Book tickets',
+                      label: 'Pre-book tickets',
+                      icon: Icons.event_available_rounded,
                       onPressed: () => _openFormats(context, ref, movie),
                     ),
                   ),
@@ -97,7 +99,7 @@ class MovieDetailPage extends ConsumerWidget {
                                 flex: 5,
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 30),
-                                  child: _MovieInformation(
+                                  child: _PrebookingInformation(
                                     movie: movie,
                                     onBook: () =>
                                         _openFormats(context, ref, movie),
@@ -111,7 +113,7 @@ class MovieDetailPage extends ConsumerWidget {
                               const SizedBox(height: 14),
                               _Hero(movie: movie),
                               const SizedBox(height: 14),
-                              _MovieInformation(movie: movie, onBook: null),
+                              _PrebookingInformation(movie: movie, onBook: null),
                             ],
                           ),
                   ),
@@ -132,21 +134,51 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.78,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: TicketflixRemoteImage(
-          url: movie.bannerUrl ?? movie.posterUrl,
-          fit: BoxFit.cover,
+    return Stack(
+      children: [
+        AspectRatio(
+          aspectRatio: 1.78,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: TicketflixRemoteImage(
+              url: movie.bannerUrl ?? movie.posterUrl,
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
-      ),
+        Positioned(
+          left: 12,
+          top: 12,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.event_available_rounded, color: Colors.white, size: 16),
+                SizedBox(width: 6),
+                Text(
+                  'Prebooking open',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
-class _MovieInformation extends StatelessWidget {
-  const _MovieInformation({required this.movie, required this.onBook});
+class _PrebookingInformation extends StatelessWidget {
+  const _PrebookingInformation({required this.movie, required this.onBook});
 
   final Movie movie;
   final VoidCallback? onBook;
@@ -156,6 +188,42 @@ class _MovieInformation extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (movie.formattedReleaseDate != null)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondaryContainer,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.accent),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.calendar_month_rounded,
+                  color: AppColors.primary,
+                  size: 24,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Releasing ${movie.formattedReleaseDate}',
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      const Text(
+                        'Reserve your seats now — show up on release day',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        const SizedBox(height: 14),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
@@ -184,7 +252,7 @@ class _MovieInformation extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const Text(
-                      'Mark interested to add it to your Wishlist',
+                      'Mark interested to get release reminders',
                       style: TextStyle(fontSize: 12),
                     ),
                   ],
@@ -243,15 +311,15 @@ class _MovieInformation extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.onSurface,
-                  borderRadius: BorderRadius.horizontal(
+                  borderRadius: const BorderRadius.horizontal(
                     left: Radius.circular(7),
                   ),
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.trending_up, color: Colors.white),
+                    Icon(Icons.event_seat, color: Colors.white),
                     SizedBox(width: 6),
-                    Text('Trending', style: TextStyle(color: Colors.white)),
+                    Text('Prebooking', style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -261,57 +329,18 @@ class _MovieInformation extends StatelessWidget {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: '42.53K ',
-                        style: TextStyle(
-                          color: AppColors.success,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        text: 'Seats reserved ',
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
-                      TextSpan(text: 'tickets booked in last 1 hour'),
+                      TextSpan(
+                        text: 'until 24 hours before release',
+                        style: TextStyle(color: AppColors.success),
+                      ),
                     ],
                   ),
                 ),
               ),
             ],
-          ),
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'Top offers for you',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 14),
-        SizedBox(
-          height: 70,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: 3,
-            separatorBuilder: (_, _) => const SizedBox(width: 12),
-            itemBuilder: (context, index) => Container(
-              width: 260,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondaryContainer,
-                border: Border.all(color: AppColors.accent),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Row(
-                children: [
-                  Icon(
-                    Icons.local_offer_outlined,
-                    color: AppColors.primary,
-                    size: 30,
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'YES Private Debit Card Offer\nTap to view details',
-                      maxLines: 2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
         ),
         const SizedBox(height: 24),
@@ -335,7 +364,11 @@ class _MovieInformation extends StatelessWidget {
         ),
         if (onBook != null) ...[
           const SizedBox(height: 24),
-          TicketflixButton(label: 'Book tickets', onPressed: onBook),
+          TicketflixButton(
+            label: 'Pre-book tickets',
+            icon: Icons.event_available_rounded,
+            onPressed: onBook,
+          ),
         ],
       ],
     );
@@ -389,12 +422,23 @@ class _FormatSheet extends StatelessWidget {
               child: Text(movie.title),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
               child: Text(
                 'Select language and format',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
+            if (movie.formattedReleaseDate != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Text(
+                  'Releasing ${movie.formattedReleaseDate}',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
             for (final language in movie.languages)
               _LanguageFormats(
                 title: language.label,

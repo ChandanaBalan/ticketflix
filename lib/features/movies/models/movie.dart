@@ -32,6 +32,7 @@ class Movie {
     this.bannerUrl,
     this.runtime = '2h 25m',
     this.certificate = 'UA13+',
+    this.releaseDate,
   });
 
   final String id;
@@ -46,11 +47,39 @@ class Movie {
   final List<CastMember> cast;
   final String runtime;
   final String certificate;
+  final DateTime? releaseDate;
+
+  bool get isPreRelease => releaseDate != null;
+
+  String? get formattedReleaseDate {
+    final date = releaseDate;
+    if (date == null) return null;
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
+  }
 }
 
 class CastMember {
-  const CastMember({required this.name, required this.role});
+  const CastMember({
+    required this.name,
+    required this.role,
+    this.photoUrl,
+  });
 
   final String name;
   final String role;
+  final String? photoUrl;
 }

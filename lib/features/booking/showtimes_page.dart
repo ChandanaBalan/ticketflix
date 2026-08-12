@@ -22,9 +22,14 @@ class _FilterSelection {
 }
 
 class ShowtimesPage extends ConsumerStatefulWidget {
-  const ShowtimesPage({required this.movieId, super.key});
+  const ShowtimesPage({
+    required this.movieId,
+    this.routePrefix = '/movies',
+    super.key,
+  });
 
   final String movieId;
+  final String routePrefix;
 
   @override
   ConsumerState<ShowtimesPage> createState() => _ShowtimesPageState();
@@ -97,6 +102,8 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
               title: state.searching ? '' : movie.title,
               subtitle: state.searching
                   ? null
+                  : movie.isPreRelease
+                  ? 'Releasing ${movie.formattedReleaseDate}'
                   : 'Movie runtime: ${movie.runtime}',
               actions: [
                 if (state.searching)
@@ -137,6 +144,35 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
               ],
             ),
           ),
+          if (movie.isPreRelease)
+            Container(
+              width: double.infinity,
+              color: AppColors.primary.withValues(alpha: .12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: ContentWidth(
+                padding: EdgeInsets.zero,
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.event_available_rounded,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Prebooking — seats reserved until release day',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           _DateStrip(
             selectedDay: state.selectedDay,
             onSelected: viewModel.setDay,
@@ -251,7 +287,7 @@ class _ShowtimesPageState extends ConsumerState<ShowtimesPage> {
                                 .read(bookingSessionProvider.notifier)
                                 .setShowtime(showtime.id);
                             context.push(
-                              '/movies/${movie.id}/shows/${showtime.id}/seats?cinemaId=${listing.cinema.id}&day=${state.selectedDay}',
+                              '${widget.routePrefix}/${movie.id}/shows/${showtime.id}/seats?cinemaId=${listing.cinema.id}&day=${state.selectedDay}',
                             );
                           },
                         ),

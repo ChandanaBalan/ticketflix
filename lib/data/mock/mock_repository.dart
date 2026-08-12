@@ -1,38 +1,16 @@
 import '../../features/booking/models/booking_models.dart';
 import '../../features/movies/models/movie.dart';
+import 'mock_assets.dart';
 
 class MockRepository {
   const MockRepository();
 
   List<Movie> get movies => const [
     Movie(
-      id: 'chithram',
-      title: 'Chithram',
-      posterUrl:
-          'https://i.pinimg.com/474x/af/b1/63/afb16363561e9030a1514a5e0f99444f.jpg',
-      bannerUrl:
-          'https://i.pinimg.com/736x/50/54/b4/5054b4af988a1c4f88424193eac21720.jpg',
-      likes: '42.1K+',
-      genres: ['Classic', 'Comedy'],
-      description:
-          'A charming classic about an unexpected marriage of convenience that turns into a warm, hilarious journey of trust, friendship, and love.',
-      languages: [MovieLanguage.malayalam],
-      formats: [MovieFormat.twoD],
-      cast: [
-        CastMember(name: 'Mohanlal', role: 'Vishnu'),
-        CastMember(name: 'Ranjini', role: 'Kalyani'),
-        CastMember(name: 'Nedumudi Venu', role: 'Cast'),
-        CastMember(name: 'Jagathy Sreekumar', role: 'Cast'),
-      ],
-      runtime: '2h 30m',
-    ),
-    Movie(
       id: 'premam',
       title: 'Premam',
-      posterUrl:
-          'https://i.pinimg.com/736x/f6/cd/6f/f6cd6f2a9f655ebe75247d0048bd4d89.jpg',
-      bannerUrl:
-          'https://i.pinimg.com/736x/76/7b/05/767b058fa36d7bc40a2251892045616e.jpg',
+      posterUrl: MockAssets.premamPoster,
+      bannerUrl: MockAssets.premamPoster,
       likes: '86.4K+',
       genres: ['Romance', 'Drama'],
       description:
@@ -48,88 +26,206 @@ class MockRepository {
       runtime: '2h 36m',
     ),
     Movie(
-      id: 'kumbalangi-nights',
-      title: 'Kumbalangi Nights',
-      posterUrl:
-          'https://i.pinimg.com/736x/84/bd/24/84bd24ad2f7360cc3c4226aad9183618.jpg',
-      bannerUrl:
-          'https://i.pinimg.com/736x/39/29/d7/3929d7573f5dc0f9add74043806ee28f.jpg',
-      likes: '31.8K+',
-      genres: ['Comedy', 'Romance'],
+      id: 'unmadham',
+      title: 'Unmadham',
+      posterUrl: MockAssets.unmadhamPoster,
+      bannerUrl: MockAssets.unmadhamPoster,
+      likes: '12.4K+',
+      genres: ['Thriller', 'Mystery'],
       description:
-          'Four brothers with very different personalities navigate family tensions, new love, and second chances in the beautiful coastal village of Kumbalangi.',
+          'A police officer investigating a series of unsettling incidents finds his own reflection becoming the key to a chilling mystery.',
       languages: [MovieLanguage.malayalam],
       formats: [MovieFormat.twoD],
       cast: [
-        CastMember(name: 'Fahadh Faasil', role: 'Shammi'),
-        CastMember(name: 'Soubin Shahir', role: 'Saji'),
-        CastMember(name: 'Shane Nigam', role: 'Bobby'),
-        CastMember(name: 'Anna Ben', role: 'Baby'),
+        CastMember(name: 'Kunchacko Boban', role: 'Lead'),
+        CastMember(name: 'Indrans', role: 'Cast'),
+        CastMember(name: 'Sreenath Bhasi', role: 'Cast'),
+        CastMember(name: 'Siddique', role: 'Cast'),
+      ],
+      runtime: '2h 18m',
+    ),
+    Movie(
+      id: 'lurk',
+      title: 'Lurk',
+      posterUrl: MockAssets.lurkPoster,
+      bannerUrl: MockAssets.lurkPoster,
+      likes: '8.2K+',
+      genres: ['Thriller', 'Horror'],
+      description:
+          'A group venturing deep into the forest discovers they are not alone, as something unseen watches from the shadows.',
+      languages: [MovieLanguage.malayalam],
+      formats: [MovieFormat.twoD],
+      cast: [
+        CastMember(name: 'Sudhi Koppa', role: 'Lead'),
+        CastMember(name: 'Sreenath Bhasi', role: 'Cast'),
+        CastMember(name: 'Vijayaraghavan', role: 'Cast'),
+        CastMember(name: 'Indrans', role: 'Cast'),
+      ],
+      runtime: '2h 05m',
+    ),
+    Movie(
+      id: 'balan-boy',
+      title: 'Balan Boy',
+      posterUrl: MockAssets.balanBoyPoster,
+      bannerUrl: MockAssets.balanBoyPoster,
+      likes: '6.8K+',
+      genres: ['Drama', 'Family'],
+      description:
+          'A young boy navigates childhood dreams and family expectations in a heartfelt coming-of-age story set in Kerala.',
+      languages: [MovieLanguage.malayalam],
+      formats: [MovieFormat.twoD],
+      cast: [
+        CastMember(name: 'Master Balan', role: 'Balan'),
+        CastMember(name: 'Murali Gopy', role: 'Cast'),
+        CastMember(name: 'Ananya', role: 'Cast'),
+        CastMember(name: 'Siddique', role: 'Cast'),
+      ],
+      runtime: '1h 58m',
+    ),
+  ];
+
+  List<Movie> get preReleaseMovies => [
+    Movie(
+      id: 'spider-man-brand-new-day',
+      title: 'Spider-Man: Brand New Day',
+      posterUrl: MockAssets.spidermanPoster,
+      bannerUrl: MockAssets.spidermanHero,
+      likes: '1.2M+',
+      genres: ['Action', 'Adventure'],
+      description:
+          'Peter Parker faces his greatest challenge yet as a familiar threat returns to New York, forcing him to redefine what it means to be Spider-Man.',
+      languages: [MovieLanguage.english, MovieLanguage.hindi],
+      formats: [MovieFormat.twoD, MovieFormat.threeD, MovieFormat.fourDx3D],
+      cast: [
+        CastMember(
+          name: 'Tom Holland',
+          role: 'Peter Parker',
+          photoUrl: MockAssets.castTom,
+        ),
+        CastMember(
+          name: 'Zendaya',
+          role: 'MJ',
+          photoUrl: MockAssets.castZendaya,
+        ),
+        CastMember(
+          name: 'Jacob Batalon',
+          role: 'Ned',
+          photoUrl: MockAssets.castJacob,
+        ),
+        CastMember(
+          name: 'Sadie Sink',
+          role: 'Gwen Stacy',
+          photoUrl: MockAssets.castSadie,
+        ),
+      ],
+      runtime: '2h 28m',
+      certificate: 'UA16+',
+      releaseDate: DateTime(2026, 9, 12),
+    ),
+    Movie(
+      id: 'pushpa-2',
+      title: 'Pushpa 2: The Rule',
+      posterUrl: MockAssets.streamBanner,
+      bannerUrl: MockAssets.liveOffer,
+      likes: '890K+',
+      genres: ['Action', 'Drama'],
+      description:
+          'The red sandalwood saga continues as Pushpa Raj rises to new heights of power while enemies close in from every direction.',
+      languages: [MovieLanguage.hindi, MovieLanguage.malayalam],
+      formats: [MovieFormat.twoD, MovieFormat.threeD],
+      cast: [
+        CastMember(name: 'Allu Arjun', role: 'Pushpa Raj'),
+        CastMember(name: 'Rashmika Mandanna', role: 'Srivalli'),
+        CastMember(name: 'Fahadh Faasil', role: 'Bhanwar Singh'),
+        CastMember(name: 'Jagapathi Babu', role: 'Cast'),
+      ],
+      runtime: '2h 45m',
+      certificate: 'UA16+',
+      releaseDate: DateTime(2026, 9, 19),
+    ),
+    Movie(
+      id: 'avatar-fire-and-ash',
+      title: 'Avatar: Fire and Ash',
+      posterUrl: MockAssets.streamBanner,
+      bannerUrl: MockAssets.liveOffer,
+      likes: '2.4M+',
+      genres: ['Sci-Fi', 'Adventure'],
+      description:
+          'Jake and Neytiri must unite the Na\'vi clans against a new volcanic threat that could destroy Pandora forever.',
+      languages: [MovieLanguage.english, MovieLanguage.hindi],
+      formats: [MovieFormat.threeD, MovieFormat.fourDx3D],
+      cast: [
+        CastMember(name: 'Sam Worthington', role: 'Jake Sully'),
+        CastMember(name: 'Zoe Saldaña', role: 'Neytiri'),
+        CastMember(name: 'Sigourney Weaver', role: 'Kiri'),
+        CastMember(name: 'Stephen Lang', role: 'Quaritch'),
+      ],
+      runtime: '3h 12m',
+      certificate: 'UA13+',
+      releaseDate: DateTime(2026, 10, 3),
+    ),
+    Movie(
+      id: 'empuraan',
+      title: 'Empuraan',
+      posterUrl: MockAssets.streamBanner,
+      bannerUrl: MockAssets.liveOffer,
+      likes: '560K+',
+      genres: ['Action', 'Thriller'],
+      description:
+          'The long-awaited sequel to Lucifer follows Khureshi Ab\'raam as he navigates a web of political intrigue and personal vendettas.',
+      languages: [MovieLanguage.malayalam, MovieLanguage.hindi],
+      formats: [MovieFormat.twoD, MovieFormat.threeD],
+      cast: [
+        CastMember(name: 'Mohanlal', role: 'Khureshi Ab\'raam'),
+        CastMember(name: 'Prithviraj Sukumaran', role: 'Cast'),
+        CastMember(name: 'Manju Warrier', role: 'Cast'),
+        CastMember(name: 'Tovino Thomas', role: 'Cast'),
+      ],
+      runtime: '2h 55m',
+      certificate: 'UA16+',
+      releaseDate: DateTime(2026, 9, 26),
+    ),
+    Movie(
+      id: 'gladiator-2',
+      title: 'Gladiator II',
+      posterUrl: MockAssets.liveOffer,
+      bannerUrl: MockAssets.streamBanner,
+      likes: '720K+',
+      genres: ['Action', 'Drama'],
+      description:
+          'Lucius is forced to enter the Colosseum after his home is conquered by tyrannical emperors who now lead Rome with an iron fist.',
+      languages: [MovieLanguage.english],
+      formats: [MovieFormat.twoD, MovieFormat.threeD],
+      cast: [
+        CastMember(name: 'Paul Mescal', role: 'Lucius'),
+        CastMember(name: 'Denzel Washington', role: 'Macrinus'),
+        CastMember(name: 'Pedro Pascal', role: 'General Acacius'),
+        CastMember(name: 'Connie Nielsen', role: 'Lucilla'),
       ],
       runtime: '2h 38m',
+      certificate: 'A',
+      releaseDate: DateTime(2026, 10, 10),
     ),
     Movie(
-      id: 'nadodikkattu',
-      title: 'Nadodikkattu',
-      posterUrl:
-          'https://i.pinimg.com/736x/06/25/99/0625997bf708e7cf115c5ba1947bff2a.jpg',
-      bannerUrl:
-          'https://i.pinimg.com/736x/d3/de/36/d3de361bb0f96948deef5ef54d6e34a9.jpg',
-      likes: '18.6K+',
-      genres: ['Mystery', 'Drama'],
+      id: 'deadpool-wolverine-2',
+      title: 'Deadpool & Wolverine 2',
+      posterUrl: MockAssets.streamBanner,
+      bannerUrl: MockAssets.liveOffer,
+      likes: '980K+',
+      genres: ['Action', 'Comedy'],
       description:
-          'When two jobless friends are tricked into believing they are headed to Dubai, their search for a better life becomes a wonderfully comic adventure.',
-      languages: [MovieLanguage.malayalam],
-      formats: [MovieFormat.twoD],
+          'Deadpool and Wolverine team up once again for a multiverse-spanning adventure that breaks every rule in the MCU playbook.',
+      languages: [MovieLanguage.english, MovieLanguage.hindi],
+      formats: [MovieFormat.twoD, MovieFormat.threeD, MovieFormat.fourDx3D],
       cast: [
-        CastMember(name: 'Mohanlal', role: 'Dasan'),
-        CastMember(name: 'Sreenivasan', role: 'Vijayan'),
-        CastMember(name: 'Shobana', role: 'Radha'),
-        CastMember(name: 'Thilakan', role: 'Cast'),
+        CastMember(name: 'Ryan Reynolds', role: 'Deadpool'),
+        CastMember(name: 'Hugh Jackman', role: 'Wolverine'),
+        CastMember(name: 'Emma Corrin', role: 'Cast'),
+        CastMember(name: 'Matthew Macfadyen', role: 'Cast'),
       ],
-      runtime: '2h 10m',
-    ),
-    Movie(
-      id: 'bangalore-days',
-      title: 'Bangalore Days',
-      posterUrl:
-          'https://i.pinimg.com/736x/ee/b3/94/eeb394ce18818d3fe5ee423e3feffb4e.jpg',
-      bannerUrl:
-          'https://i.pinimg.com/736x/d4/69/ff/d469ff3099c9ccec0926188398f4f856.jpg',
-      likes: '74.5K+',
-      genres: ['Drama', 'Romance'],
-      description:
-          'Three cousins reunite in Bangalore and find their ideas of love, ambition, and family changing as they chase new dreams in the city.',
-      languages: [MovieLanguage.malayalam],
-      formats: [MovieFormat.twoD, MovieFormat.threeD],
-      cast: [
-        CastMember(name: 'Dulquer Salmaan', role: 'Arjun'),
-        CastMember(name: 'Nivin Pauly', role: 'Kuttan'),
-        CastMember(name: 'Nazriya Nazim', role: 'Divya'),
-        CastMember(name: 'Parvathy Thiruvothu', role: 'Sarah'),
-      ],
-      runtime: '2h 52m',
-    ),
-    Movie(
-      id: 'ambili',
-      title: 'Ambili',
-      posterUrl:
-          'https://i.pinimg.com/736x/65/88/94/6588945f9970de031a7e1a7dde580824.jpg',
-      bannerUrl:
-          'https://i.pinimg.com/736x/6f/b3/b1/6fb3b143e6547b03eea4ed5f6e46043b.jpg',
-      likes: '28.9K+',
-      genres: ['Romance', 'Family'],
-      description:
-          'A kind-hearted free spirit finds his world changing when a childhood friend returns, bringing old memories, new feelings, and a chance to grow up.',
-      languages: [MovieLanguage.malayalam],
-      formats: [MovieFormat.twoD, MovieFormat.threeD],
-      cast: [
-        CastMember(name: 'Soubin Shahir', role: 'Ambili'),
-        CastMember(name: 'Tanvi Ram', role: 'Teena'),
-        CastMember(name: 'Naveen Nazim', role: 'Boban'),
-        CastMember(name: 'Jaffer Idukki', role: 'Cast'),
-      ],
-      runtime: '2h 22m',
+      runtime: '2h 18m',
+      certificate: 'A',
+      releaseDate: DateTime(2026, 10, 17),
     ),
   ];
 
