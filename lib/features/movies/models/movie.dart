@@ -73,13 +73,8 @@ class Movie {
 }
 
 class CastMember {
-  const CastMember({
-    required this.name,
-    required this.role,
-    this.photoUrl,
-  });
+  const CastMember({required this.name, required this.role});
 
   final String name;
   final String role;
-  final String? photoUrl;
 }

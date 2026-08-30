@@ -1,16 +1,38 @@
 import '../../features/booking/models/booking_models.dart';
 import '../../features/movies/models/movie.dart';
-import 'mock_assets.dart';
 
 class MockRepository {
   const MockRepository();
 
   List<Movie> get movies => const [
     Movie(
+      id: 'chithram',
+      title: 'Chithram',
+      posterUrl:
+          'https://i.pinimg.com/474x/af/b1/63/afb16363561e9030a1514a5e0f99444f.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/50/54/b4/5054b4af988a1c4f88424193eac21720.jpg',
+      likes: '42.1K+',
+      genres: ['Classic', 'Comedy'],
+      description:
+          'A charming classic about an unexpected marriage of convenience that turns into a warm, hilarious journey of trust, friendship, and love.',
+      languages: [MovieLanguage.malayalam],
+      formats: [MovieFormat.twoD],
+      cast: [
+        CastMember(name: 'Mohanlal', role: 'Vishnu'),
+        CastMember(name: 'Ranjini', role: 'Kalyani'),
+        CastMember(name: 'Nedumudi Venu', role: 'Cast'),
+        CastMember(name: 'Jagathy Sreekumar', role: 'Cast'),
+      ],
+      runtime: '2h 30m',
+    ),
+    Movie(
       id: 'premam',
       title: 'Premam',
-      posterUrl: MockAssets.premamPoster,
-      bannerUrl: MockAssets.premamPoster,
+      posterUrl:
+          'https://i.pinimg.com/736x/f6/cd/6f/f6cd6f2a9f655ebe75247d0048bd4d89.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/76/7b/05/767b058fa36d7bc40a2251892045616e.jpg',
       likes: '86.4K+',
       genres: ['Romance', 'Drama'],
       description:
@@ -26,61 +48,88 @@ class MockRepository {
       runtime: '2h 36m',
     ),
     Movie(
-      id: 'unmadham',
-      title: 'Unmadham',
-      posterUrl: MockAssets.unmadhamPoster,
-      bannerUrl: MockAssets.unmadhamPoster,
-      likes: '12.4K+',
-      genres: ['Thriller', 'Mystery'],
+      id: 'kumbalangi-nights',
+      title: 'Kumbalangi Nights',
+      posterUrl:
+          'https://i.pinimg.com/736x/84/bd/24/84bd24ad2f7360cc3c4226aad9183618.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/39/29/d7/3929d7573f5dc0f9add74043806ee28f.jpg',
+      likes: '31.8K+',
+      genres: ['Comedy', 'Romance'],
       description:
-          'A police officer investigating a series of unsettling incidents finds his own reflection becoming the key to a chilling mystery.',
+          'Four brothers with very different personalities navigate family tensions, new love, and second chances in the beautiful coastal village of Kumbalangi.',
       languages: [MovieLanguage.malayalam],
       formats: [MovieFormat.twoD],
       cast: [
-        CastMember(name: 'Kunchacko Boban', role: 'Lead'),
-        CastMember(name: 'Indrans', role: 'Cast'),
-        CastMember(name: 'Sreenath Bhasi', role: 'Cast'),
-        CastMember(name: 'Siddique', role: 'Cast'),
+        CastMember(name: 'Fahadh Faasil', role: 'Shammi'),
+        CastMember(name: 'Soubin Shahir', role: 'Saji'),
+        CastMember(name: 'Shane Nigam', role: 'Bobby'),
+        CastMember(name: 'Anna Ben', role: 'Baby'),
       ],
-      runtime: '2h 18m',
+      runtime: '2h 38m',
     ),
     Movie(
-      id: 'lurk',
-      title: 'Lurk',
-      posterUrl: MockAssets.lurkPoster,
-      bannerUrl: MockAssets.lurkPoster,
-      likes: '8.2K+',
-      genres: ['Thriller', 'Horror'],
+      id: 'nadodikkattu',
+      title: 'Nadodikkattu',
+      posterUrl:
+          'https://i.pinimg.com/736x/06/25/99/0625997bf708e7cf115c5ba1947bff2a.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/d3/de/36/d3de361bb0f96948deef5ef54d6e34a9.jpg',
+      likes: '18.6K+',
+      genres: ['Mystery', 'Drama'],
       description:
-          'A group venturing deep into the forest discovers they are not alone, as something unseen watches from the shadows.',
+          'When two jobless friends are tricked into believing they are headed to Dubai, their search for a better life becomes a wonderfully comic adventure.',
       languages: [MovieLanguage.malayalam],
       formats: [MovieFormat.twoD],
       cast: [
-        CastMember(name: 'Sudhi Koppa', role: 'Lead'),
-        CastMember(name: 'Sreenath Bhasi', role: 'Cast'),
-        CastMember(name: 'Vijayaraghavan', role: 'Cast'),
-        CastMember(name: 'Indrans', role: 'Cast'),
+        CastMember(name: 'Mohanlal', role: 'Dasan'),
+        CastMember(name: 'Sreenivasan', role: 'Vijayan'),
+        CastMember(name: 'Shobana', role: 'Radha'),
+        CastMember(name: 'Thilakan', role: 'Cast'),
       ],
-      runtime: '2h 05m',
+      runtime: '2h 10m',
     ),
     Movie(
-      id: 'balan-boy',
-      title: 'Balan Boy',
-      posterUrl: MockAssets.balanBoyPoster,
-      bannerUrl: MockAssets.balanBoyPoster,
-      likes: '6.8K+',
-      genres: ['Drama', 'Family'],
+      id: 'bangalore-days',
+      title: 'Bangalore Days',
+      posterUrl:
+          'https://i.pinimg.com/736x/ee/b3/94/eeb394ce18818d3fe5ee423e3feffb4e.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/d4/69/ff/d469ff3099c9ccec0926188398f4f856.jpg',
+      likes: '74.5K+',
+      genres: ['Drama', 'Romance'],
       description:
-          'A young boy navigates childhood dreams and family expectations in a heartfelt coming-of-age story set in Kerala.',
+          'Three cousins reunite in Bangalore and find their ideas of love, ambition, and family changing as they chase new dreams in the city.',
       languages: [MovieLanguage.malayalam],
-      formats: [MovieFormat.twoD],
+      formats: [MovieFormat.twoD, MovieFormat.threeD],
       cast: [
-        CastMember(name: 'Master Balan', role: 'Balan'),
-        CastMember(name: 'Murali Gopy', role: 'Cast'),
-        CastMember(name: 'Ananya', role: 'Cast'),
-        CastMember(name: 'Siddique', role: 'Cast'),
+        CastMember(name: 'Dulquer Salmaan', role: 'Arjun'),
+        CastMember(name: 'Nivin Pauly', role: 'Kuttan'),
+        CastMember(name: 'Nazriya Nazim', role: 'Divya'),
+        CastMember(name: 'Parvathy Thiruvothu', role: 'Sarah'),
       ],
-      runtime: '1h 58m',
+      runtime: '2h 52m',
+    ),
+    Movie(
+      id: 'ambili',
+      title: 'Ambili',
+      posterUrl:
+          'https://i.pinimg.com/736x/65/88/94/6588945f9970de031a7e1a7dde580824.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/6f/b3/b1/6fb3b143e6547b03eea4ed5f6e46043b.jpg',
+      likes: '28.9K+',
+      genres: ['Romance', 'Family'],
+      description:
+          'A kind-hearted free spirit finds his world changing when a childhood friend returns, bringing old memories, new feelings, and a chance to grow up.',
+      languages: [MovieLanguage.malayalam],
+      formats: [MovieFormat.twoD, MovieFormat.threeD],
+      cast: [
+        CastMember(name: 'Soubin Shahir', role: 'Ambili'),
+        CastMember(name: 'Tanvi Ram', role: 'Teena'),
+        CastMember(name: 'Naveen Nazim', role: 'Boban'),
+        CastMember(name: 'Jaffer Idukki', role: 'Cast'),
+      ],
+      runtime: '2h 22m',
     ),
   ];
 
@@ -88,8 +137,10 @@ class MockRepository {
     Movie(
       id: 'spider-man-brand-new-day',
       title: 'Spider-Man: Brand New Day',
-      posterUrl: MockAssets.spidermanPoster,
-      bannerUrl: MockAssets.spidermanHero,
+      posterUrl:
+          'https://i.pinimg.com/736x/50/54/b4/5054b4af988a1c4f88424193eac21720.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/50/54/b4/5054b4af988a1c4f88424193eac21720.jpg',
       likes: '1.2M+',
       genres: ['Action', 'Adventure'],
       description:
@@ -97,26 +148,10 @@ class MockRepository {
       languages: [MovieLanguage.english, MovieLanguage.hindi],
       formats: [MovieFormat.twoD, MovieFormat.threeD, MovieFormat.fourDx3D],
       cast: [
-        CastMember(
-          name: 'Tom Holland',
-          role: 'Peter Parker',
-          photoUrl: MockAssets.castTom,
-        ),
-        CastMember(
-          name: 'Zendaya',
-          role: 'MJ',
-          photoUrl: MockAssets.castZendaya,
-        ),
-        CastMember(
-          name: 'Jacob Batalon',
-          role: 'Ned',
-          photoUrl: MockAssets.castJacob,
-        ),
-        CastMember(
-          name: 'Sadie Sink',
-          role: 'Gwen Stacy',
-          photoUrl: MockAssets.castSadie,
-        ),
+        CastMember(name: 'Tom Holland', role: 'Peter Parker'),
+        CastMember(name: 'Zendaya', role: 'MJ'),
+        CastMember(name: 'Jacob Batalon', role: 'Ned'),
+        CastMember(name: 'Jon Bernthal', role: 'Frank Castle'),
       ],
       runtime: '2h 28m',
       certificate: 'UA16+',
@@ -125,8 +160,10 @@ class MockRepository {
     Movie(
       id: 'pushpa-2',
       title: 'Pushpa 2: The Rule',
-      posterUrl: MockAssets.streamBanner,
-      bannerUrl: MockAssets.liveOffer,
+      posterUrl:
+          'https://i.pinimg.com/736x/76/7b/05/767b058fa36d7bc40a2251892045616e.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/39/29/d7/3929d7573f5dc0f9add74043806ee28f.jpg',
       likes: '890K+',
       genres: ['Action', 'Drama'],
       description:
@@ -146,8 +183,10 @@ class MockRepository {
     Movie(
       id: 'avatar-fire-and-ash',
       title: 'Avatar: Fire and Ash',
-      posterUrl: MockAssets.streamBanner,
-      bannerUrl: MockAssets.liveOffer,
+      posterUrl:
+          'https://i.pinimg.com/736x/84/bd/24/84bd24ad2f7360cc3c4226aad9183618.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/d3/de/36/d3de361bb0f96948deef5ef54d6e34a9.jpg',
       likes: '2.4M+',
       genres: ['Sci-Fi', 'Adventure'],
       description:
@@ -167,8 +206,10 @@ class MockRepository {
     Movie(
       id: 'empuraan',
       title: 'Empuraan',
-      posterUrl: MockAssets.streamBanner,
-      bannerUrl: MockAssets.liveOffer,
+      posterUrl:
+          'https://i.pinimg.com/736x/ee/b3/94/eeb394ce18818d3fe5ee423e3feffb4e.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/d4/69/ff/d469ff3099c9ccec0926188398f4f856.jpg',
       likes: '560K+',
       genres: ['Action', 'Thriller'],
       description:
@@ -188,8 +229,10 @@ class MockRepository {
     Movie(
       id: 'gladiator-2',
       title: 'Gladiator II',
-      posterUrl: MockAssets.liveOffer,
-      bannerUrl: MockAssets.streamBanner,
+      posterUrl:
+          'https://i.pinimg.com/736x/65/88/94/6588945f9970de031a7e1a7dde580824.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/6f/b3/b1/6fb3b143e6547b03eea4ed5f6e46043b.jpg',
       likes: '720K+',
       genres: ['Action', 'Drama'],
       description:
@@ -209,8 +252,10 @@ class MockRepository {
     Movie(
       id: 'deadpool-wolverine-2',
       title: 'Deadpool & Wolverine 2',
-      posterUrl: MockAssets.streamBanner,
-      bannerUrl: MockAssets.liveOffer,
+      posterUrl:
+          'https://i.pinimg.com/736x/06/25/99/0625997bf708e7cf115c5ba1947bff2a.jpg',
+      bannerUrl:
+          'https://i.pinimg.com/736x/f6/cd/6f/f6cd6f2a9f655ebe75247d0048bd4d89.jpg',
       likes: '980K+',
       genres: ['Action', 'Comedy'],
       description:

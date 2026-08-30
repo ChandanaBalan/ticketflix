@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme.dart';
 import '../../core/design_system/widgets.dart';
 import '../../core/responsive/responsive.dart';
-import '../../data/mock/mock_assets.dart';
 import 'view_models/home_view_model.dart';
 
 class HomePage extends ConsumerWidget {
@@ -139,8 +138,10 @@ class HomePage extends ConsumerWidget {
                                 child: Stack(
                                   fit: StackFit.expand,
                                   children: [
-                                    const TicketflixRemoteImage(
-                                      url: MockAssets.premamPoster,
+                                    TicketflixRemoteImage(
+                                      url:
+                                          movies[1].bannerUrl ??
+                                          movies[1].posterUrl,
                                     ),
                                     DecoratedBox(
                                       decoration: BoxDecoration(

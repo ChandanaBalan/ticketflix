@@ -323,14 +323,45 @@ class _MovieInformation extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: movie.cast.length,
             separatorBuilder: (_, _) => const SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              final member = movie.cast[index];
-              return CastMemberTile(
-                name: member.name,
-                role: member.role,
-                photoUrl: member.photoUrl,
-              );
-            },
+            itemBuilder: (context, index) => SizedBox(
+              width: 104,
+              child: Column(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      width: 104,
+                      height: 88,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.person_outline_rounded,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        size: 38,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    movie.cast[index].name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  Text(
+                    movie.cast[index].role,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
         if (onBook != null) ...[
